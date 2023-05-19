@@ -1,8 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.dto.DealDto;
+import com.meters.requests.DealRequest;
 import com.meters.entities.Deal;
-import com.meters.entities.enums.ClientType;
+import com.meters.entities.constants.ClientType;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.CompanyRepository;
 import com.meters.repository.ManagerRepository;
@@ -33,115 +33,90 @@ public class DealMapper {
     private final SaleRepository saleRepository;
 
 
-    public Deal toEntity(DealDto dealDto) {
-        Deal deal = modelMapper.map(dealDto, Deal.class);
-        setDealType(dealDto, deal);
-        setManager(dealDto, deal);
-        chooseDealConditions(dealDto, deal);
-        chooseBuyer(dealDto, deal);
-        chooseOwner(dealDto, deal);
+    public Deal toEntity(DealRequest dealRequest) {
+        Deal deal = modelMapper.map(dealRequest, Deal.class);
+        setDealType(dealRequest, deal);
+        setManager(dealRequest, deal);
+        chooseDealConditions(dealRequest, deal);
+        chooseBuyer(dealRequest, deal);
+        chooseOwner(dealRequest, deal);
 
         return deal;
     }
 
-    public DealDto toDto(Deal deal) {
-        DealDto dealDto = modelMapper.map(deal, DealDto.class);
-        dealDto.setManager(deal.getManager().getId());
-        dealDto.setDealType(deal.getDealType().getId());
 
-        if(deal.getRent() != null) {
-            dealDto.setDealConditions(deal.getRent().getId());
-        } else if (deal.getSale() != null) {
-            dealDto.setDealConditions(deal.getSale().getId());
+    public Deal updateDeal(DealRequest dealRequest, Deal deal) {
+        if(dealRequest.getAmount() != null) {
+            deal.setAmount(dealRequest.getAmount());
         }
-
-        if(deal.getOwnerCompany() != null) {
-            dealDto.setOwner(deal.getOwnerCompany().getId());
-        } else if (deal.getOwnerPerson() != null) {
-            dealDto.setOwner(deal.getOwnerPerson().getId());
+        if(dealRequest.getFee() != null) {
+            deal.setFee(dealRequest.getFee());
         }
-
-        if(deal.getBuyerCompany() != null) {
-            dealDto.setBuyer(deal.getBuyerCompany().getId());
-        } else if (deal.getBuyerPerson() != null) {
-            dealDto.setBuyer(deal.getBuyerPerson().getId());
+        if(dealRequest.getDealDate() != null) {
+            deal.setDealDate(dealRequest.getDealDate());
         }
-
-        return dealDto;
-    }
-
-    public Deal updateDeal(DealDto dealDto, Deal deal) {
-        if(dealDto.getAmount() != null) {
-            deal.setAmount(dealDto.getAmount());
+        if(dealRequest.getOwnerClientType() != null) {
+            deal.setOwnerClientType(ClientType.valueOf(dealRequest.getOwnerClientType()));
         }
-        if(dealDto.getFee() != null) {
-            deal.setFee(dealDto.getFee());
+        if(dealRequest.getBuyerClientType() != null) {
+            deal.setBuyerClientType(ClientType.valueOf(dealRequest.getBuyerClientType()));
         }
-        if(dealDto.getDealDate() != null) {
-            deal.setDealDate(dealDto.getDealDate());
+        if(dealRequest.getDealType() != null) {
+            setDealType(dealRequest, deal);
         }
-        if(dealDto.getOwnerClientType() != null) {
-            deal.setOwnerClientType(ClientType.valueOf(dealDto.getOwnerClientType()));
+        if(dealRequest.getDealConditions() != null) {
+            chooseDealConditions(dealRequest, deal);
         }
-        if(dealDto.getBuyerClientType() != null) {
-            deal.setBuyerClientType(ClientType.valueOf(dealDto.getBuyerClientType()));
+        if(dealRequest.getManager() != null) {
+            setManager(dealRequest, deal);
         }
-        if(dealDto.getDealType() != null) {
-            setDealType(dealDto, deal);
+        if(dealRequest.getOwner() != null) {
+            chooseOwner(dealRequest, deal);
         }
-        if(dealDto.getDealConditions() != null) {
-            chooseDealConditions(dealDto, deal);
-        }
-        if(dealDto.getManager() != null) {
-            setManager(dealDto, deal);
-        }
-        if(dealDto.getOwner() != null) {
-            chooseOwner(dealDto, deal);
-        }
-        if(dealDto.getBuyer() != null) {
-            chooseBuyer(dealDto, deal);
+        if(dealRequest.getBuyer() != null) {
+            chooseBuyer(dealRequest, deal);
         }
 
         deal.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return deal;
     }
 
-    public void setManager(DealDto dealDto, Deal deal) {
-        deal.setManager(managerRepository.findById(dealDto.getManager())
+    public void setManager(DealRequest dealRequest, Deal deal) {
+        deal.setManager(managerRepository.findById(dealRequest.getManager())
                 .orElseThrow(() -> new EntityNotFoundException("Manager not exist")));
     }
 
-    public void setDealType(DealDto dealDto, Deal deal) {
-        deal.setDealType(dealTypeRepository.findById(dealDto.getDealType())
+    public void setDealType(DealRequest dealRequest, Deal deal) {
+        deal.setDealType(dealTypeRepository.findById(dealRequest.getDealType())
                 .orElseThrow(() -> new EntityNotFoundException("DealType not exist")));
     }
 
-    public void chooseDealConditions(DealDto dealDto, Deal deal) {
-        if(dealDto.getDealType() == DEAL_TYPE_RENT_ID) {
-            deal.setRent(rentRepository.findById(dealDto.getDealType())
+    public void chooseDealConditions(DealRequest dealRequest, Deal deal) {
+        if(dealRequest.getDealType() == DEAL_TYPE_RENT_ID) {
+            deal.setRent(rentRepository.findById(dealRequest.getDealType())
                     .orElseThrow(() -> new EntityNotFoundException("Rent not exist")));
-        } else if (dealDto.getDealType() == DEAL_TYPE_SALE_ID) {
-            deal.setSale(saleRepository.findById(dealDto.getDealType())
+        } else if (dealRequest.getDealType() == DEAL_TYPE_SALE_ID) {
+            deal.setSale(saleRepository.findById(dealRequest.getDealType())
                     .orElseThrow(() -> new EntityNotFoundException("Sale not exist")));
         }
     }
 
-    public void chooseOwner(DealDto dealDto, Deal deal) {
-        if(dealDto.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
-            deal.setOwnerCompany(companyRepository.findById(dealDto.getOwner())
+    public void chooseOwner(DealRequest dealRequest, Deal deal) {
+        if(dealRequest.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
+            deal.setOwnerCompany(companyRepository.findById(dealRequest.getOwner())
                     .orElseThrow(() -> new EntityNotFoundException("Company not exist")));
-        } else if (dealDto.getOwnerClientType().equals(ClientType.PERSON.toString())) {
-            deal.setOwnerPerson(personRepository.findById(dealDto.getOwner())
+        } else if (dealRequest.getOwnerClientType().equals(ClientType.PERSON.toString())) {
+            deal.setOwnerPerson(personRepository.findById(dealRequest.getOwner())
                     .orElseThrow(() -> new EntityNotFoundException("Person not exist")));
         }
     }
 
-    public void chooseBuyer(DealDto dealDto, Deal deal) {
-        if(dealDto.getBuyerClientType().equals(ClientType.COMPANY.toString())) {
-            deal.setBuyerCompany(companyRepository.findById(dealDto.getBuyer())
+    public void chooseBuyer(DealRequest dealRequest, Deal deal) {
+        if(dealRequest.getBuyerClientType().equals(ClientType.COMPANY.toString())) {
+            deal.setBuyerCompany(companyRepository.findById(dealRequest.getBuyer())
                     .orElseThrow(() -> new EntityNotFoundException("Company not exist")));
-        } else if (dealDto.getBuyerClientType().equals(ClientType.PERSON.toString())) {
-            deal.setBuyerPerson(personRepository.findById(dealDto.getBuyer())
+        } else if (dealRequest.getBuyerClientType().equals(ClientType.PERSON.toString())) {
+            deal.setBuyerPerson(personRepository.findById(dealRequest.getBuyer())
                     .orElseThrow(() -> new EntityNotFoundException("Person not exist")));
         }
     }

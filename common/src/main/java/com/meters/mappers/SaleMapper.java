@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.SaleDto;
+import com.meters.requests.SaleRequest;
 import com.meters.entities.Sale;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.RealEstateRepository;
@@ -19,28 +19,22 @@ public class SaleMapper {
 
     private final RealEstateRepository realEstateRepository;
 
-    public Sale toEntity(SaleDto saleDto) {
-        Sale sale = modelMapper.map(saleDto, Sale.class);
-        setRealEstate(saleDto,sale);
+    public Sale toEntity(SaleRequest saleRequest) {
+        Sale sale = modelMapper.map(saleRequest, Sale.class);
+        setRealEstate(saleRequest,sale);
         return sale;
     }
 
-    public SaleDto toDto(Sale sale) {
-        SaleDto saleDto = modelMapper.map(sale, SaleDto.class);
-        saleDto.setRealEstate(sale.getRealEstate().getId());
-        return saleDto;
-    }
-
-    public Sale updateSale(SaleDto saleDto, Sale sale) {
-        if(saleDto.getPrice() != null) {
-            sale.setPrice(saleDto.getPrice());
+    public Sale updateSale(SaleRequest saleRequest, Sale sale) {
+        if(saleRequest.getPrice() != null) {
+            sale.setPrice(saleRequest.getPrice());
         }
-        setRealEstate(saleDto,sale);
+        setRealEstate(saleRequest,sale);
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return sale;
     }
-    public void setRealEstate(SaleDto saleDto, Sale sale) {
-        sale.setRealEstate(realEstateRepository.findById(saleDto.getRealEstate())
+    public void setRealEstate(SaleRequest saleRequest, Sale sale) {
+        sale.setRealEstate(realEstateRepository.findById(saleRequest.getRealEstate())
                 .orElseThrow(() -> new EntityNotFoundException("RealEstate not exist")));
     }
 }

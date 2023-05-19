@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.dto.DealDto;
+import com.meters.requests.DealRequest;
 import com.meters.entities.Deal;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,8 @@ import com.meters.mappers.DealMapper;
 import com.meters.repository.DealRepository;
 import com.meters.service.DealService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -23,17 +25,17 @@ public class DealServiceImpl implements DealService {
     private final DealMapper dealMapper;
 
     @Override
-    public Optional<Deal> createDeal(DealDto dealDto) {
-        Deal deal = dealMapper.toEntity(dealDto);
+    public Optional<Deal> createDeal(DealRequest dealRequest) {
+        Deal deal = dealMapper.toEntity(dealRequest);
         deal.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         deal.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(dealRepository.save(deal));
     }
 
     @Override
-    public Optional<Deal> updateDeal(Long id, DealDto dealDto) {
+    public Optional<Deal> updateDeal(Long id, DealRequest dealRequest) {
         Deal deal = findDeal(id);
-        dealMapper.updateDeal(dealDto, deal);
+        dealMapper.updateDeal(dealRequest, deal);
         return Optional.of(dealRepository.save(deal));
     }
 
@@ -43,9 +45,14 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
+    public Page<Deal> findAll(Pageable pageable) {
+        return dealRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<Deal> findById(Long id) {
         Deal deal = findDeal(id);
-        if(deal.getIsDeleted().equals(Boolean.TRUE)) {
+        if(deal.isDeleted()) {
             throw new EntityIsDeletedException("Deal is deleted");
         }
         return Optional.of(deal);
@@ -54,7 +61,7 @@ public class DealServiceImpl implements DealService {
     @Override
     public Optional<Deal> restoreDeletedDeal(Long id) {
         Deal deal = findDeal(id);
-        deal.setIsDeleted(false);
+        deal.setDeleted(false);
         deal.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(dealRepository.save(deal));
     }
@@ -65,9 +72,9 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public Deal softDelete(Long id) {
+    public Deal deactivate(Long id) {
         Deal deal = findDeal(id);
-        deal.setIsDeleted(true);
+        deal.setDeleted(true);
         deal.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return dealRepository.save(deal);
     }

@@ -1,9 +1,14 @@
 package com.meters.controller;
 
-import com.meters.dto.ManagerDto;
+import com.meters.requests.ManagerRequest;
 import com.meters.entities.Manager;
 import com.meters.service.ManagerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -33,28 +38,43 @@ public class ManagerController {
         return new ResponseEntity<>(managers, HttpStatus.OK);
     }
 
+    @GetMapping("/page/{page}")
+    public ResponseEntity<Object> getAllManagersWithPageAndSort(@PathVariable int page) {
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+
+        Page<Manager> managers = managerService.findAll(pageable);
+
+        if (managers.hasContent()) {
+            return new ResponseEntity<>(managers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Manager>> getManagerById(@PathVariable Long id) {
         return ResponseEntity.ok(managerService.findById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Optional<Manager>> createManager(@Valid @RequestBody ManagerDto managerDto) {
-        Optional<Manager> manager = managerService.createManager(managerDto);
+    public ResponseEntity<Optional<Manager>> createManager(@Valid @RequestBody ManagerRequest managerRequest) {
+        Optional<Manager> manager = managerService.createManager(managerRequest);
         return new ResponseEntity<>(manager, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Optional<Manager>> updateManager(@Valid @RequestBody ManagerDto managerDto, @PathVariable("id") Long id) {
-        Optional<Manager> manager = managerService.updateManager(id, managerDto);
+    public ResponseEntity<Optional<Manager>> updateManager(@Valid @RequestBody ManagerRequest managerRequest, @PathVariable("id") Long id) {
+        Optional<Manager> manager = managerService.updateManager(id, managerRequest);
         return new ResponseEntity<>(manager, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/soft_delete")
-    public ResponseEntity<String> softDeleteManager(@PathVariable("id") Long id) {
-        managerService.softDelete(id);
+    public ResponseEntity<String> deactivateManager(@PathVariable("id") Long id) {
+        managerService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deleteManager(@PathVariable("id") Long id) {
         managerService.deleteById(id);
@@ -71,5 +91,26 @@ public class ManagerController {
     public ResponseEntity<Manager> setManagersRole(@PathVariable Long managerId, @RequestParam String roleName) {
         Optional<Manager> manager = managerService.setUserRole(managerId, roleName);
         return manager.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/birth_day_today")
+    public ResponseEntity<Object> getBirthDayManagers() {
+        List<Manager> managers = managerService.findBirthDayManagers(LocalDateTime.now());
+        return new ResponseEntity<>(managers, HttpStatus.OK);
+    }
+
+    @GetMapping("/average_fee")
+    public ResponseEntity<Map<String, Double>> getAverageFeeOfManagers() {
+        return ResponseEntity.ok(managerService.getAverageFeeOfManagers());
+    }
+
+    @GetMapping("/full_name")
+    public ResponseEntity<Object> findByFullName(@RequestParam String query) {
+        return ResponseEntity.ok(managerService.findByFullNameContainingIgnoreCase(query));
+    }
+
+    @GetMapping("/best_month_seller")
+    public ResponseEntity<Object> findBestSeller(@RequestParam int month, int year) {
+        return ResponseEntity.ok(managerService.getBestSellerOfTheMonth(month, year));
     }
 }

@@ -1,5 +1,6 @@
-package com.meters.dto;
+package com.meters.requests;
 
+import com.meters.entities.constants.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,12 +18,11 @@ import java.sql.Timestamp;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class PersonDto {
-
-    private String personName;
+public class ManagerRequest {
+    private String managerName;
     private String surname;
-    private String personFullName;
     private Timestamp birthDate;
-    private String phoneNum;
-    private String passportNum;
+    private String email;
+    private String password;
+    private Gender gender;
 }

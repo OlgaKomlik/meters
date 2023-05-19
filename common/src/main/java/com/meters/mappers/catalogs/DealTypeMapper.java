@@ -1,6 +1,6 @@
 package com.meters.mappers.catalogs;
 
-import com.meters.dto.catalogs.DealTypeDto;
+import com.meters.requests.catalogs.DealTypeRequest;
 import com.meters.entities.catalogs.DealType;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,16 +15,13 @@ public class DealTypeMapper {
 
     private final ModelMapper modelMapper;
 
-    public DealType toEntity(DealTypeDto dealTypeDto) {
-        return modelMapper.map(dealTypeDto, DealType.class);
+    public DealType toEntity(DealTypeRequest dealTypeRequest) {
+        return modelMapper.map(dealTypeRequest, DealType.class);
     }
 
-    public DealTypeDto toDto(DealType dealType) {
-        return modelMapper.map(dealType, DealTypeDto.class);
-    }
-    public DealType updateDealType(DealTypeDto dealTypeDto, DealType dealType) {
-        if(dealTypeDto.getTypeName() != null) {
-            dealType.setTypeName(dealTypeDto.getTypeName());
+    public DealType updateDealType(DealTypeRequest dealTypeRequest, DealType dealType) {
+        if(dealTypeRequest.getTypeName() != null) {
+            dealType.setTypeName(dealTypeRequest.getTypeName());
         }
         dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.LocationDto;
+import com.meters.requests.LocationRequest;
 import com.meters.entities.Location;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,25 +14,22 @@ import java.time.LocalDateTime;
 public class LocationMapper {
     private final ModelMapper modelMapper;
 
-    public Location toEntity(LocationDto locationDto) {
-        return modelMapper.map(locationDto, Location.class);
+    public Location toEntity(LocationRequest locationRequest) {
+        return modelMapper.map(locationRequest, Location.class);
     }
 
-    public LocationDto toDto(Location location) {
-        return modelMapper.map(location, LocationDto.class);
-    }
-    public Location updateLocation(LocationDto locationDto, Location location) {
-        if(locationDto.getCountry() != null) {
-            location.setCountry(locationDto.getCountry());
+    public Location updateLocation(LocationRequest locationRequest, Location location) {
+        if(locationRequest.getCountry() != null) {
+            location.setCountry(locationRequest.getCountry());
         }
-        if(locationDto.getCity() != null) {
-            location.setCity(locationDto.getCity());
+        if(locationRequest.getCity() != null) {
+            location.setCity(locationRequest.getCity());
         }
-        if(locationDto.getDistrict() != null) {
-            location.setDistrict(locationDto.getDistrict());
+        if(locationRequest.getDistrict() != null) {
+            location.setDistrict(locationRequest.getDistrict());
         }
-        if(locationDto.getRegion() != null) {
-            location.setRegion(locationDto.getRegion());
+        if(locationRequest.getRegion() != null) {
+            location.setRegion(locationRequest.getRegion());
         }
 
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));

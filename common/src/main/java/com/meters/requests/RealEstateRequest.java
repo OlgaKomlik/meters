@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class RealEstateDto {
+public class RealEstateRequest {
     private Integer square;
     private Integer rooms;
     private Integer floors;

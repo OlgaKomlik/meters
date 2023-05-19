@@ -1,9 +1,14 @@
 package com.meters.controller;
 
-import com.meters.dto.RealEstateDto;
+import com.meters.requests.RealEstateRequest;
 import com.meters.entities.RealEstate;
 import com.meters.service.RealEstateService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,28 +35,43 @@ public class RealEstateController {
         return new ResponseEntity<>(realEstates, HttpStatus.OK);
     }
 
+    @GetMapping("/page/{page}")
+    public ResponseEntity<Object> getAllRealEstatesWithPageAndSort(@PathVariable int page) {
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+
+        Page<RealEstate> realEstates = realEstateService.findAll(pageable);
+
+        if (realEstates.hasContent()) {
+            return new ResponseEntity<>(realEstates, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<RealEstate>> getRealEstateById(@PathVariable Long id) {
         return ResponseEntity.ok(realEstateService.findById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Optional<RealEstate>> createRealEstate(@Valid @RequestBody RealEstateDto realEstateDto) {
-        Optional<RealEstate> realEstate = realEstateService.createRealEstate(realEstateDto);
+    public ResponseEntity<Optional<RealEstate>> createRealEstate(@Valid @RequestBody RealEstateRequest realEstateRequest) {
+        Optional<RealEstate> realEstate = realEstateService.createRealEstate(realEstateRequest);
         return new ResponseEntity<>(realEstate, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Optional<RealEstate>> updateRealEstate(@Valid @RequestBody RealEstateDto realEstateDto, @PathVariable("id") Long id) {
-        Optional<RealEstate> realEstate = realEstateService.updateRealEstate(id, realEstateDto);
+    public ResponseEntity<Optional<RealEstate>> updateRealEstate(@Valid @RequestBody RealEstateRequest realEstateRequest, @PathVariable("id") Long id) {
+        Optional<RealEstate> realEstate = realEstateService.updateRealEstate(id, realEstateRequest);
         return new ResponseEntity<>(realEstate, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/soft_delete")
-    public ResponseEntity<String> softDeleteRealEstate(@PathVariable("id") Long id) {
-        realEstateService.softDelete(id);
+    public ResponseEntity<String> deactivateRealEstate(@PathVariable("id") Long id) {
+        realEstateService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deleteRealEstate(@PathVariable("id") Long id) {
         realEstateService.deleteById(id);

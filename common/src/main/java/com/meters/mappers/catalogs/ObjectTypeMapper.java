@@ -1,6 +1,6 @@
 package com.meters.mappers.catalogs;
 
-import com.meters.dto.catalogs.ObjectTypeDto;
+import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,16 +14,13 @@ import java.time.LocalDateTime;
 public class ObjectTypeMapper {
     private final ModelMapper modelMapper;
 
-    public ObjectType toEntity(ObjectTypeDto objectTypeDto) {
-        return modelMapper.map(objectTypeDto, ObjectType.class);
+    public ObjectType toEntity(ObjectTypeRequest objectTypeRequest) {
+        return modelMapper.map(objectTypeRequest, ObjectType.class);
     }
 
-    public ObjectTypeDto toDto(ObjectType objectType) {
-        return modelMapper.map(objectType, ObjectTypeDto.class);
-    }
-    public ObjectType updateObjectType(ObjectTypeDto objectTypeDto, ObjectType objectType) {
-        if(objectTypeDto.getTypeName() != null) {
-            objectType.setTypeName(objectTypeDto.getTypeName());
+       public ObjectType updateObjectType(ObjectTypeRequest objectTypeRequest, ObjectType objectType) {
+        if(objectTypeRequest.getTypeName() != null) {
+            objectType.setTypeName(objectTypeRequest.getTypeName());
         }
         objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

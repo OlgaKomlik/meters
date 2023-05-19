@@ -1,8 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.dto.RealEstateDto;
+import com.meters.requests.RealEstateRequest;
 import com.meters.entities.RealEstate;
-import com.meters.entities.enums.ClientType;
+import com.meters.entities.constants.ClientType;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.CompanyRepository;
 import com.meters.repository.LocationRepository;
@@ -25,57 +25,45 @@ public class RealEstateMapper {
     private final PersonRepository personRepository;
     private final CompanyRepository companyRepository;
 
-    public RealEstate toEntity(RealEstateDto realEstateDto) {
+    public RealEstate toEntity(RealEstateRequest realEstateRequest) {
 
-        RealEstate realEstate = modelMapper.map(realEstateDto, RealEstate.class);
-        setLocation(realEstateDto, realEstate);
-        setObjectType(realEstateDto, realEstate);
-        chooseOwnerByType(realEstateDto, realEstate);
+        RealEstate realEstate = modelMapper.map(realEstateRequest, RealEstate.class);
+        setLocation(realEstateRequest, realEstate);
+        setObjectType(realEstateRequest, realEstate);
+        chooseOwnerByType(realEstateRequest, realEstate);
         return realEstate;
     }
 
-    public RealEstateDto toDto(RealEstate realEstate) {
-        RealEstateDto realEstateDto = modelMapper.map(realEstate, RealEstateDto.class);
-        realEstateDto.setLocation(realEstate.getLocation().getId());
-        realEstateDto.setObjectType(realEstate.getObjectType().getId());
-        if(realEstate.getOwnerCompany() != null) {
-        realEstateDto.setOwner(realEstate.getOwnerCompany().getId());
-        } else if (realEstate.getOwnerPerson() != null) {
-            realEstateDto.setOwner(realEstate.getOwnerPerson().getId());
+    public RealEstate updateRealEstate(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+        if(realEstateRequest.getSquare() != null) {
+            realEstate.setSquare(realEstateRequest.getSquare());
         }
-        return realEstateDto;
-    }
-
-    public RealEstate updateRealEstate(RealEstateDto realEstateDto, RealEstate realEstate) {
-        if(realEstateDto.getSquare() != null) {
-            realEstate.setSquare(realEstateDto.getSquare());
+        if(realEstateRequest.getRooms() != null) {
+            realEstate.setRooms(realEstateRequest.getRooms());
         }
-        if(realEstateDto.getRooms() != null) {
-            realEstate.setRooms(realEstateDto.getRooms());
+        if(realEstateRequest.getFloors() != null) {
+            realEstate.setFloors(realEstateRequest.getFloors());
         }
-        if(realEstateDto.getFloors() != null) {
-            realEstate.setFloors(realEstateDto.getFloors());
+        if(realEstateRequest.getGardenSquare() != null) {
+            realEstate.setGardenSquare(realEstateRequest.getGardenSquare());
         }
-        if(realEstateDto.getGardenSquare() != null) {
-            realEstate.setGardenSquare(realEstateDto.getGardenSquare());
+        if(realEstateRequest.getGarage() != null) {
+            realEstate.setGarage(realEstateRequest.getGarage());
         }
-        if(realEstateDto.getGarage() != null) {
-            realEstate.setGarage(realEstateDto.getGarage());
+        if(realEstateRequest.getAddress() != null) {
+            realEstate.setAddress(realEstateRequest.getAddress());
         }
-        if(realEstateDto.getAddress() != null) {
-            realEstate.setAddress(realEstateDto.getAddress());
+        if(realEstateRequest.getOwnerClientType() != null) {
+            realEstate.setOwnerClientType(ClientType.valueOf(realEstateRequest.getOwnerClientType()));
         }
-        if(realEstateDto.getOwnerClientType() != null) {
-            realEstate.setOwnerClientType(ClientType.valueOf(realEstateDto.getOwnerClientType()));
+        if(realEstateRequest.getOwner() != null) {
+            chooseOwnerByType(realEstateRequest, realEstate);
         }
-        if(realEstateDto.getOwner() != null) {
-            chooseOwnerByType(realEstateDto, realEstate);
+        if(realEstateRequest.getLocation() != null) {
+            setLocation(realEstateRequest, realEstate);
         }
-        if(realEstateDto.getLocation() != null) {
-            setLocation(realEstateDto, realEstate);
-        }
-        if(realEstateDto.getObjectType() != null) {
-            setObjectType(realEstateDto, realEstate);
+        if(realEstateRequest.getObjectType() != null) {
+            setObjectType(realEstateRequest, realEstate);
         }
 
 
@@ -84,23 +72,23 @@ public class RealEstateMapper {
         return realEstate;
     }
 
-    public void chooseOwnerByType (RealEstateDto realEstateDto, RealEstate realEstate) {
-        if(realEstateDto.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
-            realEstate.setOwnerCompany(companyRepository.findById(realEstateDto.getOwner())
+    public void chooseOwnerByType (RealEstateRequest realEstateRequest, RealEstate realEstate) {
+        if(realEstateRequest.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
+            realEstate.setOwnerCompany(companyRepository.findById(realEstateRequest.getOwner())
                     .orElseThrow(() -> new EntityNotFoundException("Company not exist")));
-        } else if (realEstateDto.getOwnerClientType().equals(ClientType.PERSON.toString())) {
-            realEstate.setOwnerPerson(personRepository.findById(realEstateDto.getOwner())
+        } else if (realEstateRequest.getOwnerClientType().equals(ClientType.PERSON.toString())) {
+            realEstate.setOwnerPerson(personRepository.findById(realEstateRequest.getOwner())
                     .orElseThrow(() -> new EntityNotFoundException("Person not exist")));
         }
     }
 
-    public void setLocation(RealEstateDto realEstateDto, RealEstate realEstate) {
-        realEstate.setLocation(locationRepository.findById(realEstateDto.getLocation())
+    public void setLocation(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+        realEstate.setLocation(locationRepository.findById(realEstateRequest.getLocation())
                 .orElseThrow(() -> new EntityNotFoundException("Location not exist")));
     }
 
-    public void setObjectType(RealEstateDto realEstateDto, RealEstate realEstate) {
-        realEstate.setObjectType(objectTypeRepository.findById(realEstateDto.getObjectType())
+    public void setObjectType(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+        realEstate.setObjectType(objectTypeRepository.findById(realEstateRequest.getObjectType())
                 .orElseThrow(() -> new EntityNotFoundException("ObjectType not exist")));
     }
 }

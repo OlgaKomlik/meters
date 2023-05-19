@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.math.BigDecimal;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,7 +15,10 @@ import java.math.BigDecimal;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class SaleDto {
-    private BigDecimal price;
-    private Long realEstate;
+public class LocationRequest {
+
+    private String country;
+    private String city;
+    private String district;
+    private String region;
 }

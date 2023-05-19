@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.RentDto;
+import com.meters.requests.RentRequest;
 import com.meters.entities.Rent;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.RealEstateRepository;
@@ -19,31 +19,25 @@ public class RentMapper {
 
     private final RealEstateRepository realEstateRepository;
 
-    public Rent toEntity(RentDto rentDto) {
-        Rent rent = modelMapper.map(rentDto, Rent.class);
-        setRealEstate(rentDto,rent);
+    public Rent toEntity(RentRequest rentRequest) {
+        Rent rent = modelMapper.map(rentRequest, Rent.class);
+        setRealEstate(rentRequest,rent);
         return rent;
     }
 
-    public RentDto toDto(Rent rent) {
-        RentDto rentDto = modelMapper.map(rent, RentDto.class);
-        rentDto.setRealEstate(rent.getRealEstate().getId());
-        return rentDto;
-    }
-
-    public Rent updateRent(RentDto rentDto, Rent rent) {
-        if(rentDto.getRentPerMonth() != null) {
-            rent.setRentPerMonth(rentDto.getRentPerMonth());
+    public Rent updateRent(RentRequest rentRequest, Rent rent) {
+        if(rentRequest.getRentPerMonth() != null) {
+            rent.setRentPerMonth(rentRequest.getRentPerMonth());
         }
-        if(rentDto.getMinPeriod() != null) {
-            rent.setMinPeriod(rentDto.getMinPeriod());
+        if(rentRequest.getMinPeriod() != null) {
+            rent.setMinPeriod(rentRequest.getMinPeriod());
         }
-        setRealEstate(rentDto,rent);
+        setRealEstate(rentRequest,rent);
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return rent;
     }
-    public void setRealEstate(RentDto rentDto, Rent rent) {
-        rent.setRealEstate(realEstateRepository.findById(rentDto.getRealEstate())
+    public void setRealEstate(RentRequest rentRequest, Rent rent) {
+        rent.setRealEstate(realEstateRepository.findById(rentRequest.getRealEstate())
                 .orElseThrow(() -> new EntityNotFoundException("RealEstate not exist")));
     }
 }

@@ -1,6 +1,6 @@
 package com.meters.service.catalogs.impl;
 
-import com.meters.dto.catalogs.DealTypeDto;
+import com.meters.requests.catalogs.DealTypeRequest;
 
 import com.meters.entities.catalogs.DealType;
 import com.meters.exceptoins.EntityIsDeletedException;
@@ -25,17 +25,17 @@ public class DataTypeServiceImpl implements DealTypeService {
     private final DealTypeMapper dealTypeMapper;
 
     @Override
-    public Optional<DealType> createDealType(DealTypeDto dealTypeDto) {
-        DealType dealType = dealTypeMapper.toEntity(dealTypeDto);
+    public Optional<DealType> createDealType(DealTypeRequest dealTypeRequest) {
+        DealType dealType = dealTypeMapper.toEntity(dealTypeRequest);
         dealType.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(dealTypeRepository.save(dealType));
     }
 
     @Override
-    public Optional<DealType> updateDealType(Long id, DealTypeDto dealTypeDto) {
+    public Optional<DealType> updateDealType(Long id, DealTypeRequest dealTypeRequest) {
         DealType dealType = findDealType(id);
-        dealTypeMapper.updateDealType(dealTypeDto, dealType);
+        dealTypeMapper.updateDealType(dealTypeRequest, dealType);
         return Optional.of(dealTypeRepository.save(dealType));
     }
 
@@ -47,7 +47,7 @@ public class DataTypeServiceImpl implements DealTypeService {
     @Override
     public Optional<DealType> findById(Long id) {
         DealType dealType = findDealType(id);
-        if(dealType.getIsDeleted().equals(Boolean.TRUE)) {
+        if(dealType.isDeleted()) {
             throw new EntityIsDeletedException("DealType is deleted");
         }
         return Optional.of(dealType);
@@ -56,7 +56,7 @@ public class DataTypeServiceImpl implements DealTypeService {
     @Override
     public Optional<DealType> restoreDeletedDealType(Long id) {
         DealType dealType = findDealType(id);
-        dealType.setIsDeleted(false);
+        dealType.setDeleted(false);
         dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(dealTypeRepository.save(dealType));
     }
@@ -67,9 +67,9 @@ public class DataTypeServiceImpl implements DealTypeService {
     }
 
     @Override
-    public DealType softDelete(Long id) {
+    public DealType deactivate(Long id) {
         DealType dealType = findDealType(id);
-        dealType.setIsDeleted(true);
+        dealType.setDeleted(true);
         dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return dealTypeRepository.save(dealType);
     }

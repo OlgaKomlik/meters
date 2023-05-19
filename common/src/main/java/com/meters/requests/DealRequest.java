@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class DealDto {
+public class DealRequest {
 
     private BigDecimal amount;
     private BigDecimal fee;

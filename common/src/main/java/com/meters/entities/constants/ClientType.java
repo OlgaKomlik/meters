@@ -1,4 +1,4 @@
-package com.meters.entities.enums;
+package com.meters.entities.constants;
 
 public enum ClientType {
     COMPANY, PERSON, OTHER, NOT_SELECTED

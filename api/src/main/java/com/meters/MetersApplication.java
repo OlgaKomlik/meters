@@ -1,7 +1,6 @@
 package com.meters;
 
 
-import com.meters.configuration.ApplicationConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

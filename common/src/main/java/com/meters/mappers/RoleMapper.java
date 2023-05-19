@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.RoleDto;
+import com.meters.requests.RoleRequest;
 import com.meters.entities.Role;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,16 +14,13 @@ import java.time.LocalDateTime;
 public class RoleMapper {
     private final ModelMapper modelMapper;
 
-    public Role toEntity(RoleDto roleDto) {
-        return modelMapper.map(roleDto, Role.class);
+    public Role toEntity(RoleRequest roleRequest) {
+        return modelMapper.map(roleRequest, Role.class);
     }
 
-    public RoleDto toDto(Role role) {
-        return modelMapper.map(role, RoleDto.class);
-    }
-    public Role updateRole(RoleDto roleDto, Role role) {
-        if(roleDto.getRoleName() != null) {
-            role.setRoleName(roleDto.getRoleName());
+    public Role updateRole(RoleRequest roleRequest, Role role) {
+        if(roleRequest.getRoleName() != null) {
+            role.setRoleName(roleRequest.getRoleName());
         }
         role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

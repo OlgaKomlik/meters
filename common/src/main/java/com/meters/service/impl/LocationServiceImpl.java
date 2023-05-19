@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.dto.LocationDto;
+import com.meters.requests.LocationRequest;
 import com.meters.entities.Location;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,8 @@ import com.meters.mappers.LocationMapper;
 import com.meters.repository.LocationRepository;
 import com.meters.service.LocationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -23,17 +25,17 @@ public class LocationServiceImpl implements LocationService {
     private final LocationMapper locationMapper;
 
     @Override
-    public Optional<Location> createLocation(LocationDto locationDto) {
-        Location location = locationMapper.toEntity(locationDto);
+    public Optional<Location> createLocation(LocationRequest locationRequest) {
+        Location location = locationMapper.toEntity(locationRequest);
         location.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(locationRepository.save(location));
     }
 
     @Override
-    public Optional<Location> updateLocation(Long id, LocationDto locationDto) {
+    public Optional<Location> updateLocation(Long id, LocationRequest locationRequest) {
         Location location = findLocation(id);
-        locationMapper.updateLocation(locationDto, location);
+        locationMapper.updateLocation(locationRequest, location);
         return Optional.of(locationRepository.save(location));
     }
 
@@ -43,9 +45,14 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    public Page<Location> findAll(Pageable pageable) {
+        return locationRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<Location> findById(Long id) {
         Location location = findLocation(id);
-        if(location.getIsDeleted().equals(Boolean.TRUE)) {
+        if(location.isDeleted()) {
             throw new EntityIsDeletedException("Location is deleted");
         }
         return Optional.of(location);
@@ -54,7 +61,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Optional<Location> restoreDeletedLocation(Long id) {
         Location location = findLocation(id);
-        location.setIsDeleted(false);
+        location.setDeleted(false);
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(locationRepository.save(location));
     }
@@ -65,9 +72,9 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location softDelete(Long id) {
+    public Location deactivate(Long id) {
         Location location = findLocation(id);
-        location.setIsDeleted(true);
+        location.setDeleted(true);
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return locationRepository.save(location);
     }

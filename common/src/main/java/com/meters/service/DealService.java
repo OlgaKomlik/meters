@@ -1,23 +1,24 @@
 package com.meters.service;
 
-import com.meters.dto.DealDto;
+import com.meters.requests.DealRequest;
 import com.meters.entities.Deal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface DealService {
 
-    Optional<Deal> createDeal(DealDto dealDto);
+    Optional<Deal> createDeal(DealRequest dealRequest);
 
-    Optional<Deal> updateDeal(Long id, DealDto dealDto);
+    Optional<Deal> updateDeal(Long id, DealRequest dealRequest);
 
     List<Deal> findAll();
-    //List<Deal> findAll(int page, int size);
-
+    Page<Deal> findAll(Pageable pageable);
     Optional<Deal> findById(Long id);
     Optional<Deal> restoreDeletedDeal(Long id);
 
     void deleteById(Long id);
-    Deal softDelete(Long id);
+    Deal deactivate(Long id);
 }

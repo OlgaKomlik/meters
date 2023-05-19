@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.dto.PersonDto;
+import com.meters.requests.PersonRequest;
 import com.meters.entities.Person;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,8 @@ import com.meters.mappers.PersonMapper;
 import com.meters.repository.PersonRepository;
 import com.meters.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,17 +26,17 @@ public class PersonServiceImpl implements PersonService {
     private final PersonMapper personMapper;
 
     @Override
-    public Optional<Person> createPerson(PersonDto personDto) {
-        Person person = personMapper.toEntity(personDto);
+    public Optional<Person> createPerson(PersonRequest personRequest) {
+        Person person = personMapper.toEntity(personRequest);
         person.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(personRepository.save(person));
     }
 
     @Override
-    public Optional<Person> updatePerson(Long id, PersonDto personDto) {
+    public Optional<Person> updatePerson(Long id, PersonRequest personRequest) {
         Person person = findPerson(id);
-        personMapper.updatePerson(personDto, person);
+        personMapper.updatePerson(personRequest, person);
         return Optional.of(personRepository.save(person));
     }
 
@@ -44,9 +46,14 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public Page<Person> findAll(Pageable pageable) {
+        return personRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<Person> findById(Long id) {
         Person person = findPerson(id);
-        if(person.getIsDeleted().equals(Boolean.TRUE)) {
+        if(person.isDeleted()) {
             throw new EntityIsDeletedException("Person is deleted");
         }
         return Optional.of(person);
@@ -55,7 +62,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> restoreDeletedPerson(Long id) {
         Person person = findPerson(id);
-        person.setIsDeleted(false);
+        person.setDeleted(false);
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(personRepository.save(person));
     }
@@ -66,14 +73,22 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person softDelete(Long id) {
+    public Person deactivate(Long id) {
         Person person = findPerson(id);
-        person.setIsDeleted(true);
+        person.setDeleted(true);
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return personRepository.save(person);
     }
 
     private Person findPerson(Long id) {
         return personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Person could not be found"));
+    }
+
+    public Optional<Person> findByPassportNum(String passNum) {
+        return personRepository.findByPassportNum(passNum);
+    }
+
+    public List<Person> findByPersonFullNameContainingIgnoreCase(String query) {
+        return personRepository.findByPersonFullNameContainingIgnoreCase(query);
     }
 }

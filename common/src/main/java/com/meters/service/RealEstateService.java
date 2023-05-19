@@ -1,22 +1,24 @@
 package com.meters.service;
 
-import com.meters.dto.RealEstateDto;
+import com.meters.requests.RealEstateRequest;
 import com.meters.entities.RealEstate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface RealEstateService {
-    Optional<RealEstate> createRealEstate(RealEstateDto realEstateDto);
+    Optional<RealEstate> createRealEstate(RealEstateRequest realEstateRequest);
 
-    Optional<RealEstate> updateRealEstate(Long id, RealEstateDto realEstateDto);
+    Optional<RealEstate> updateRealEstate(Long id, RealEstateRequest realEstateRequest);
 
     List<RealEstate> findAll();
-    //List<RealEstate> findAll(int page, int size);
+    Page<RealEstate> findAll(Pageable pageable);
 
     Optional<RealEstate> findById(Long id);
     Optional<RealEstate> restoreDeletedRealEstate(Long id);
 
     void deleteById(Long id);
-    RealEstate softDelete(Long id);
+    RealEstate deactivate(Long id);
 }

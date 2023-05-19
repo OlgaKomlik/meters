@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.PersonDto;
+import com.meters.requests.PersonRequest;
 import com.meters.entities.Person;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,37 +14,33 @@ import java.time.LocalDateTime;
 public class PersonMapper {
     private final ModelMapper modelMapper;
 
-    public Person toEntity(PersonDto personDto) {
-        return modelMapper.map(personDto, Person.class);
+    public Person toEntity(PersonRequest personRequest) {
+        Person person = modelMapper.map(personRequest, Person.class);
+        person.setPersonFullName(personRequest.getPersonName() + " " + personRequest.getSurname());
+        return person;
     }
 
-    public PersonDto toDto(Person person) {
-        return modelMapper.map(person, PersonDto.class);
-    }
-    public Person updatePerson(PersonDto personDto, Person person) {
-        if(personDto.getPersonName() != null) {
-            person.setPersonName(personDto.getPersonName());
+    public Person updatePerson(PersonRequest personRequest, Person person) {
+        if(personRequest.getPersonName() != null) {
+            person.setPersonName(personRequest.getPersonName());
         }
 
-        if(personDto.getSurname() != null) {
-            person.setSurname(personDto.getSurname());
+        if(personRequest.getSurname() != null) {
+            person.setSurname(personRequest.getSurname());
         }
 
-        if(personDto.getPersonFullName() != null) {
-            person.setPersonFullName(personDto.getPersonFullName());
+        if(personRequest.getBirthDate() != null) {
+            person.setBirthDate(personRequest.getBirthDate());
         }
 
-        if(personDto.getBirthDate() != null) {
-            person.setBirthDate(personDto.getBirthDate());
+        if(personRequest.getPhoneNum() != null) {
+            person.setPhoneNum(personRequest.getPhoneNum());
         }
 
-        if(personDto.getPhoneNum() != null) {
-            person.setPhoneNum(personDto.getPhoneNum());
+        if(personRequest.getPassportNum() != null) {
+            person.setPassportNum(personRequest.getPassportNum());
         }
-
-        if(personDto.getPassportNum() != null) {
-            person.setPassportNum(personDto.getPassportNum());
-        }
+        person.setPersonFullName(person.getPersonName() + " " + person.getSurname());
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 
         return person;

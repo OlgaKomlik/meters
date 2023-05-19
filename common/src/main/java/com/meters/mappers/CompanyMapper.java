@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.CompanyDto;
+import com.meters.requests.CompanyRequest;
 import com.meters.entities.Company;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,45 +15,42 @@ public class CompanyMapper {
 
     private final ModelMapper modelMapper;
 
-    public Company toEntity(CompanyDto companyDto) {
-        return modelMapper.map(companyDto, Company.class);
+    public Company toEntity(CompanyRequest companyRequest) {
+        Company company= modelMapper.map(companyRequest, Company.class);
+        company.setDirectorFullName(companyRequest.getDirectorName() + " " + companyRequest.getDirectorSurname());
+        return company;
     }
 
-    public CompanyDto toDto(Company company) {
-        return modelMapper.map(company, CompanyDto.class);
-    }
-    public Company updateCompany(CompanyDto companyDto, Company company) {
+    public Company updateCompany(CompanyRequest companyRequest, Company company) {
 
-        if(companyDto.getCompanyName() != null) {
-            company.setCompanyName(companyDto.getCompanyName());
+        if(companyRequest.getCompanyName() != null) {
+            company.setCompanyName(companyRequest.getCompanyName());
         }
-        if(companyDto.getUnpNum() != null) {
-            company.setUnpNum(companyDto.getUnpNum());
+        if(companyRequest.getUnpNum() != null) {
+            company.setUnpNum(companyRequest.getUnpNum());
         }
-        if(companyDto.getDirectorFullName() != null) {
-            company.setDirectorFullName(companyDto.getDirectorFullName());
+        if(companyRequest.getPhoneNum() != null) {
+            company.setPhoneNum(companyRequest.getPhoneNum());
         }
-        if(companyDto.getPhoneNum() != null) {
-            company.setPhoneNum(companyDto.getPhoneNum());
+        if(companyRequest.getDateCreateCompany() != null) {
+            company.setDateCreateCompany(companyRequest.getDateCreateCompany());
         }
-        if(companyDto.getDateCreateCompany() != null) {
-            company.setDateCreateCompany(companyDto.getDateCreateCompany());
+        if(companyRequest.getAddress() != null) {
+            company.setAddress(companyRequest.getAddress());
         }
-        if(companyDto.getAddress() != null) {
-            company.setAddress(companyDto.getAddress());
+        if(companyRequest.getDirectorName() != null) {
+            company.setDirectorName(companyRequest.getDirectorName());
         }
-        if(companyDto.getDirectorName() != null) {
-            company.setDirectorName(companyDto.getDirectorName());
+        if(companyRequest.getDirectorSurname() != null) {
+            company.setDirectorSurname(companyRequest.getDirectorSurname());
         }
-        if(companyDto.getDirectorSurname() != null) {
-            company.setDirectorSurname(companyDto.getDirectorSurname());
+        if(companyRequest.getCheckingAccount() != null) {
+            company.setCheckingAccount(companyRequest.getCheckingAccount());
         }
-        if(companyDto.getCheckingAccount() != null) {
-            company.setCheckingAccount(companyDto.getCheckingAccount());
+        if(companyRequest.getBankName() != null) {
+            company.setBankName(companyRequest.getBankName());
         }
-        if(companyDto.getBankName() != null) {
-            company.setBankName(companyDto.getBankName());
-        }
+        company.setDirectorFullName(company.getDirectorName() + " " + company.getDirectorSurname());
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 
         return company;

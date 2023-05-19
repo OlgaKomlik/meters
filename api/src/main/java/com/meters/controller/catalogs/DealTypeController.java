@@ -1,9 +1,10 @@
 package com.meters.controller.catalogs;
 
 
-import com.meters.dto.catalogs.DealTypeDto;
+import com.meters.requests.catalogs.DealTypeRequest;
 import com.meters.entities.catalogs.DealType;
 import com.meters.service.catalogs.DealTypeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,22 +39,23 @@ public class DealTypeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Optional<DealType>> createDealType(@Valid @RequestBody DealTypeDto dealTypeDto) {
-        Optional<DealType> dealType = dealTypeService.createDealType(dealTypeDto);
+    public ResponseEntity<Optional<DealType>> createDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest) {
+        Optional<DealType> dealType = dealTypeService.createDealType(dealTypeRequest);
         return new ResponseEntity<>(dealType, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Optional<DealType>> updateDealType(@Valid @RequestBody DealTypeDto dealTypeDto, @PathVariable("id") Long id) {
-        Optional<DealType> dealType = dealTypeService.updateDealType(id, dealTypeDto);
+    public ResponseEntity<Optional<DealType>> updateDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest, @PathVariable("id") Long id) {
+        Optional<DealType> dealType = dealTypeService.updateDealType(id, dealTypeRequest);
         return new ResponseEntity<>(dealType, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/soft_delete")
-    public ResponseEntity<String> softDeleteDealType(@PathVariable("id") Long id) {
-        dealTypeService.softDelete(id);
+    public ResponseEntity<String> deactivateDealType(@PathVariable("id") Long id) {
+        dealTypeService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deleteDealType(@PathVariable("id") Long id) {
         dealTypeService.deleteById(id);

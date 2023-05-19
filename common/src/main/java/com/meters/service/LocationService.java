@@ -1,23 +1,27 @@
 package com.meters.service;
 
-import com.meters.dto.LocationDto;
+import com.meters.requests.LocationRequest;
 import com.meters.entities.Location;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface LocationService {
 
-    Optional<Location> createLocation(LocationDto locationDto);
+    Optional<Location> createLocation(LocationRequest locationRequest);
 
-    Optional<Location> updateLocation(Long id, LocationDto locationDto);
+    Optional<Location> updateLocation(Long id, LocationRequest locationRequest);
 
+    @Cacheable("locations")
     List<Location> findAll();
-    //List<Location> findAll(int page, int size);
+    Page<Location> findAll(Pageable pageable);
 
     Optional<Location> findById(Long id);
     Optional<Location> restoreDeletedLocation(Long id);
 
     void deleteById(Long id);
-    Location softDelete(Long id);
+    Location deactivate(Long id);
 }

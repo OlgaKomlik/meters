@@ -1,9 +1,14 @@
 package com.meters.controller;
 
-import com.meters.dto.SaleDto;
+import com.meters.requests.SaleRequest;
 import com.meters.entities.Sale;
 import com.meters.service.SaleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,28 +35,43 @@ public class SaleController {
         return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 
+    @GetMapping("/page/{page}")
+    public ResponseEntity<Object> getAllSalesWithPageAndSort(@PathVariable int page) {
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+
+        Page<Sale> sales = saleService.findAll(pageable);
+
+        if (sales.hasContent()) {
+            return new ResponseEntity<>(sales, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Sale>> getSaleById(@PathVariable Long id) {
         return ResponseEntity.ok(saleService.findById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Optional<Sale>> createSale(@Valid @RequestBody SaleDto saleDto) {
-        Optional<Sale> sale = saleService.createSale(saleDto);
+    public ResponseEntity<Optional<Sale>> createSale(@Valid @RequestBody SaleRequest saleRequest) {
+        Optional<Sale> sale = saleService.createSale(saleRequest);
         return new ResponseEntity<>(sale, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Optional<Sale>> updateSale(@Valid @RequestBody SaleDto saleDto, @PathVariable("id") Long id) {
-        Optional<Sale> sale = saleService.updateSale(id, saleDto);
+    public ResponseEntity<Optional<Sale>> updateSale(@Valid @RequestBody SaleRequest saleRequest, @PathVariable("id") Long id) {
+        Optional<Sale> sale = saleService.updateSale(id, saleRequest);
         return new ResponseEntity<>(sale, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/soft_delete")
-    public ResponseEntity<String> softDeleteSale(@PathVariable("id") Long id) {
-        saleService.softDelete(id);
+    public ResponseEntity<String> deactivateSale(@PathVariable("id") Long id) {
+        saleService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deleteSale(@PathVariable("id") Long id) {
         saleService.deleteById(id);

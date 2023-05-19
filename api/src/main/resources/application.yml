@@ -15,7 +15,7 @@ spring:
     enabled: true
     baseline-on-migrate: true
     baseline-description: Flyway Scripts
-        #    locations: classpath:/db
+    #    locations: classpath:/db
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     url: ${spring.datasource.url}

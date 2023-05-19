@@ -1,6 +1,6 @@
 package com.meters.service.catalogs.impl;
 
-import com.meters.dto.catalogs.ObjectTypeDto;
+import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -23,17 +23,17 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     private final ObjectTypeMapper objectTypeMapper;
 
     @Override
-    public Optional<ObjectType> createObjectType(ObjectTypeDto objectTypeDto) {
-        ObjectType objectType = objectTypeMapper.toEntity(objectTypeDto);
+    public Optional<ObjectType> createObjectType(ObjectTypeRequest objectTypeRequest) {
+        ObjectType objectType = objectTypeMapper.toEntity(objectTypeRequest);
         objectType.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(objectTypeRepository.save(objectType));
     }
 
     @Override
-    public Optional<ObjectType> updateObjectType(Long id, ObjectTypeDto objectTypeDto) {
+    public Optional<ObjectType> updateObjectType(Long id, ObjectTypeRequest objectTypeRequest) {
         ObjectType objectType = findObjectType(id);
-        objectTypeMapper.updateObjectType(objectTypeDto, objectType);
+        objectTypeMapper.updateObjectType(objectTypeRequest, objectType);
         return Optional.of(objectTypeRepository.save(objectType));
     }
 
@@ -45,7 +45,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     @Override
     public Optional<ObjectType> findById(Long id) {
         ObjectType objectType = findObjectType(id);
-        if(objectType.getIsDeleted().equals(Boolean.TRUE)) {
+        if(objectType.isDeleted()) {
             throw new EntityIsDeletedException("ObjectType is deleted");
         }
         return Optional.of(objectType);
@@ -54,7 +54,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     @Override
     public Optional<ObjectType> restoreDeletedObjectType(Long id) {
         ObjectType objectType = findObjectType(id);
-        objectType.setIsDeleted(false);
+        objectType.setDeleted(false);
         objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(objectTypeRepository.save(objectType));
     }
@@ -65,9 +65,9 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
-    public ObjectType softDelete(Long id) {
+    public ObjectType deactivate(Long id) {
         ObjectType objectType = findObjectType(id);
-        objectType.setIsDeleted(true);
+        objectType.setDeleted(true);
         objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return objectTypeRepository.save(objectType);
     }

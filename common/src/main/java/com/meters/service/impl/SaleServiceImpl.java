@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.dto.SaleDto;
+import com.meters.requests.SaleRequest;
 import com.meters.entities.Sale;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,8 @@ import com.meters.mappers.SaleMapper;
 import com.meters.repository.SaleRepository;
 import com.meters.service.SaleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -23,17 +25,17 @@ public class SaleServiceImpl implements SaleService {
     private final SaleMapper saleMapper;
 
     @Override
-    public Optional<Sale> createSale(SaleDto saleDto) {
-        Sale sale = saleMapper.toEntity(saleDto);
+    public Optional<Sale> createSale(SaleRequest saleRequest) {
+        Sale sale = saleMapper.toEntity(saleRequest);
         sale.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(saleRepository.save(sale));
     }
 
     @Override
-    public Optional<Sale> updateSale(Long id, SaleDto saleDto) {
+    public Optional<Sale> updateSale(Long id, SaleRequest saleRequest) {
         Sale sale = findSale(id);
-        saleMapper.updateSale(saleDto, sale);
+        saleMapper.updateSale(saleRequest, sale);
         return Optional.of(saleRepository.save(sale));
     }
 
@@ -43,9 +45,13 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    public Page<Sale> findAll(Pageable pageable) {
+        return saleRepository.findAll(pageable);
+    }
+    @Override
     public Optional<Sale> findById(Long id) {
         Sale sale = findSale(id);
-        if(sale.getIsDeleted().equals(Boolean.TRUE)) {
+        if(sale.isDeleted()) {
             throw new EntityIsDeletedException("Sale is deleted");
         }
         return Optional.of(sale);
@@ -54,7 +60,7 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public Optional<Sale> restoreDeletedSale(Long id) {
         Sale sale = findSale(id);
-        sale.setIsDeleted(false);
+        sale.setDeleted(false);
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(saleRepository.save(sale));
     }
@@ -65,9 +71,9 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public Sale softDelete(Long id) {
+    public Sale deactivate(Long id) {
         Sale sale = findSale(id);
-        sale.setIsDeleted(true);
+        sale.setDeleted(true);
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return saleRepository.save(sale);
     }

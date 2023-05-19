@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests.catalogs;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class RoleDto {
-    private String roleName;
+public class DealTypeRequest {
+    private String typeName;
 }
+

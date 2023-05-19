@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests.catalogs;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.math.BigDecimal;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,9 +15,6 @@ import java.math.BigDecimal;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class RentDto {
-
-    private BigDecimal rentPerMonth;
-    private Integer minPeriod;
-    private Long realEstate;
+public class ObjectTypeRequest {
+    private String typeName;
 }

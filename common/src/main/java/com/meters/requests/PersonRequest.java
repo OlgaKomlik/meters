@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.sql.Timestamp;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -15,10 +17,11 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class LocationDto {
+public class PersonRequest {
 
-    private String country;
-    private String city;
-    private String district;
-    private String region;
+    private String personName;
+    private String surname;
+    private Timestamp birthDate;
+    private String phoneNum;
+    private String passportNum;
 }

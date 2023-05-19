@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.dto.CompanyDto;
+import com.meters.requests.CompanyRequest;
 import com.meters.entities.Company;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,8 @@ import com.meters.mappers.CompanyMapper;
 import com.meters.repository.CompanyRepository;
 import com.meters.service.CompanyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -22,17 +24,17 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyMapper companyMapper;
 
     @Override
-    public Optional<Company> createCompany(CompanyDto companyDto) {
-        Company company = companyMapper.toEntity(companyDto);
+    public Optional<Company> createCompany(CompanyRequest companyRequest) {
+        Company company = companyMapper.toEntity(companyRequest);
         company.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(companyRepository.save(company));
     }
 
     @Override
-    public Optional<Company> updateCompany(Long id, CompanyDto companyDto) {
+    public Optional<Company> updateCompany(Long id, CompanyRequest companyRequest) {
         Company company = findCompany(id);
-        companyMapper.updateCompany(companyDto, company);
+        companyMapper.updateCompany(companyRequest, company);
         return Optional.of(companyRepository.save(company));
     }
 
@@ -42,9 +44,14 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public Page<Company> findAll(Pageable pageable) {
+        return companyRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<Company> findById(Long id) {
         Company company = findCompany(id);
-        if(company.getIsDeleted().equals(Boolean.TRUE)) {
+        if(company.isDeleted()) {
             throw new EntityIsDeletedException("Company is deleted");
         }
         return Optional.of(company);
@@ -53,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Optional<Company> restoreDeletedCompany(Long id) {
         Company company = findCompany(id);
-        company.setIsDeleted(false);
+        company.setDeleted(false);
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(companyRepository.save(company));
     }
@@ -64,14 +71,22 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Company softDelete(Long id) {
+    public Company deactivate(Long id) {
         Company company = findCompany(id);
-        company.setIsDeleted(true);
+        company.setDeleted(true);
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return companyRepository.save(company);
     }
 
     private Company findCompany(Long id) {
         return companyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Company could not be found"));
+    }
+
+    public Optional<Company> findCompanyByUnpNum(String unpNum) {
+        return companyRepository.findCompanyByUnpNum(unpNum);
+    }
+
+    public List<Company> findCompaniesByCompanyNameIsContainingIgnoreCase(String query) {
+        return companyRepository.findCompaniesByCompanyNameIsContainingIgnoreCase(query);
     }
 }

@@ -1,4 +1,4 @@
-package com.meters.dto;
+package com.meters.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +17,10 @@ import java.sql.Timestamp;
 @EqualsAndHashCode
 @ToString
 @Builder
-public class CompanyDto {
+public class CompanyRequest {
 
     private String companyName;
     private String unpNum;
-    private String directorFullName;
     private String phoneNum;
     private Timestamp dateCreateCompany;
     private String address;

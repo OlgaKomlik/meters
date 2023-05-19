@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.dto.ManagerDto;
+import com.meters.requests.ManagerRequest;
 import com.meters.entities.AuthenticationInfo;
 import com.meters.entities.Manager;
 import lombok.RequiredArgsConstructor;
@@ -15,40 +15,33 @@ import java.time.LocalDateTime;
 public class ManagerMapper {
     private final ModelMapper modelMapper;
 
-    public Manager toEntity(ManagerDto managerDto) {
-        Manager manager = modelMapper.map(managerDto, Manager.class);
-        manager.setAuthenticationInfo(new AuthenticationInfo(managerDto.getEmail(), managerDto.getPassword()));
+    public Manager toEntity(ManagerRequest managerRequest) {
+        Manager manager = modelMapper.map(managerRequest, Manager.class);
+        manager.setAuthenticationInfo(new AuthenticationInfo(managerRequest.getEmail(), managerRequest.getPassword()));
+        manager.setFullName(managerRequest.getManagerName() + " " + managerRequest.getSurname());
         return manager;
     }
 
-    public ManagerDto toDto(Manager manager) {
-        ManagerDto managerDto = modelMapper.map(manager, ManagerDto.class);
-        managerDto.setEmail(manager.getAuthenticationInfo().getEmail());
-        managerDto.setPassword(manager.getAuthenticationInfo().getPassword());
-        return managerDto;
-    }
-    public Manager updateManager(ManagerDto managerDto, Manager manager) {
-        if(managerDto.getManagerName() != null) {
-            manager.setManagerName(managerDto.getManagerName());
+    public Manager updateManager(ManagerRequest managerRequest, Manager manager) {
+        if(managerRequest.getManagerName() != null) {
+            manager.setManagerName(managerRequest.getManagerName());
         }
-        if(managerDto.getSurname() != null) {
-            manager.setSurname(managerDto.getSurname());
+        if(managerRequest.getSurname() != null) {
+            manager.setSurname(managerRequest.getSurname());
         }
-        if(managerDto.getBirthDate() != null) {
-            manager.setBirthDate(managerDto.getBirthDate());
+        if(managerRequest.getBirthDate() != null) {
+            manager.setBirthDate(managerRequest.getBirthDate());
         }
-        if(managerDto.getEmail() != null) {
-            manager.getAuthenticationInfo().setEmail(managerDto.getEmail());
+        if(managerRequest.getEmail() != null) {
+            manager.getAuthenticationInfo().setEmail(managerRequest.getEmail());
         }
-        if(managerDto.getPassword() != null) {
-            manager.getAuthenticationInfo().setPassword(managerDto.getPassword());
+        if(managerRequest.getPassword() != null) {
+            manager.getAuthenticationInfo().setPassword(managerRequest.getPassword());
         }
-        if(managerDto.getGender() != null) {
-            manager.setGender(managerDto.getGender());
+        if(managerRequest.getGender() != null) {
+            manager.setGender(managerRequest.getGender());
         }
-        if(managerDto.getFullName() != null) {
-            manager.setFullName(managerDto.getFullName());
-        }
+        manager.setFullName(manager.getManagerName() + " " + manager.getSurname());
         manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 
         return manager;

@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.dto.RentDto;
+import com.meters.requests.RentRequest;
 import com.meters.entities.Rent;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,8 @@ import com.meters.mappers.RentMapper;
 import com.meters.repository.RentRepository;
 import com.meters.service.RentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -22,17 +24,17 @@ public class RentServiceImpl implements RentService {
     private final RentMapper rentMapper;
 
     @Override
-    public Optional<Rent> createRent(RentDto rentDto) {
-        Rent rent = rentMapper.toEntity(rentDto);
+    public Optional<Rent> createRent(RentRequest rentRequest) {
+        Rent rent = rentMapper.toEntity(rentRequest);
         rent.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(rentRepository.save(rent));
     }
 
     @Override
-    public Optional<Rent> updateRent(Long id, RentDto rentDto) {
+    public Optional<Rent> updateRent(Long id, RentRequest rentRequest) {
         Rent rent = findRent(id);
-        rentMapper.updateRent(rentDto, rent);
+        rentMapper.updateRent(rentRequest, rent);
         return Optional.of(rentRepository.save(rent));
     }
 
@@ -42,9 +44,14 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
+    public Page<Rent> findAll(Pageable pageable) {
+        return rentRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<Rent> findById(Long id) {
         Rent rent = findRent(id);
-        if(rent.getIsDeleted().equals(Boolean.TRUE)) {
+        if(rent.isDeleted()) {
             throw new EntityIsDeletedException("Rent is deleted");
         }
         return Optional.of(rent);
@@ -53,7 +60,7 @@ public class RentServiceImpl implements RentService {
     @Override
     public Optional<Rent> restoreDeletedRent(Long id) {
         Rent rent = findRent(id);
-        rent.setIsDeleted(false);
+        rent.setDeleted(false);
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(rentRepository.save(rent));
     }
@@ -64,9 +71,9 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
-    public Rent softDelete(Long id) {
+    public Rent deactivate(Long id) {
         Rent rent = findRent(id);
-        rent.setIsDeleted(true);
+        rent.setDeleted(true);
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return rentRepository.save(rent);
     }
