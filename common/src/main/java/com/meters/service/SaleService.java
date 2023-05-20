@@ -17,7 +17,7 @@ public interface SaleService {
     List<Sale> findAll();
     Page<Sale> findAll(Pageable pageable);
     Optional<Sale> findById(Long id);
-    Optional<Sale> restoreDeletedSale(Long id);
+    Optional<Sale> activateSale(Long id);
 
     void deleteById(Long id);
     Sale deactivate(Long id);

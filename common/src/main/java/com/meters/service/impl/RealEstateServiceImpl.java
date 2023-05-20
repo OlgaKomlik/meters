@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class RealEstateServiceImpl implements RealEstateService {
     private final RealEstateMapper realEstateMapper;
 
     @Override
+    @Transactional
     public Optional<RealEstate> createRealEstate(RealEstateRequest realEstateRequest) {
         RealEstate realEstate = realEstateMapper.toEntity(realEstateRequest);
         realEstate.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -33,6 +35,7 @@ public class RealEstateServiceImpl implements RealEstateService {
     }
 
     @Override
+    @Transactional
     public Optional<RealEstate> updateRealEstate(Long id, RealEstateRequest realEstateRequest) {
         RealEstate realEstate = findRealEstate(id);
         realEstateMapper.updateRealEstate(realEstateRequest, realEstate);
@@ -59,7 +62,8 @@ public class RealEstateServiceImpl implements RealEstateService {
     }
 
     @Override
-    public Optional<RealEstate> restoreDeletedRealEstate(Long id) {
+    @Transactional
+    public Optional<RealEstate> activateRealEstate(Long id) {
         RealEstate realEstate = findRealEstate(id);
         realEstate.setDeleted(false);
         realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -72,6 +76,7 @@ public class RealEstateServiceImpl implements RealEstateService {
     }
 
     @Override
+    @Transactional
     public RealEstate deactivate(Long id) {
         RealEstate realEstate = findRealEstate(id);
         realEstate.setDeleted(true);

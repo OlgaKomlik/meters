@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMapper roleMapper;
 
     @Override
+    @Transactional
     public Optional<Role> createRole(RoleRequest roleRequest) {
         Role role = roleMapper.toEntity(roleRequest);
         role.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -33,6 +35,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public Optional<Role> updateRole(Long id, RoleRequest roleRequest) {
         Role role = findRole(id);
         roleMapper.updateRole(roleRequest, role);
@@ -59,7 +62,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Optional<Role> restoreDeletedRole(Long id) {
+    @Transactional
+    public Optional<Role> activateRole(Long id) {
         Role role = findRole(id);
         role.setDeleted(false);
         role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -72,6 +76,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public Role deactivate(Long id) {
         Role role = findRole(id);
         role.setDeleted(true);

@@ -5,6 +5,7 @@ import com.meters.entities.Person;
 import com.meters.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,9 @@ public class PersonController {
 
     private final PersonService personService;
 
+    @Value("${person.page-capacity}")
+    private Integer pageCapacity;
+
     @GetMapping
     public ResponseEntity<Object> getAllPersons() {
         List<Person> persons = personService.findAll();
@@ -40,7 +44,7 @@ public class PersonController {
     @GetMapping("/page/{page}")
     public ResponseEntity<Object> getAllPersonsWithPageAndSort(@PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
         Page<Person> persons = personService.findAll(pageable);
 
@@ -56,33 +60,33 @@ public class PersonController {
         return ResponseEntity.ok(personService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Person>> createPerson(@Valid @RequestBody PersonRequest personRequest) {
         Optional<Person> person = personService.createPerson(personRequest);
         return new ResponseEntity<>(person, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Person>> updatePerson(@Valid @RequestBody PersonRequest personRequest, @PathVariable("id") Long id) {
         Optional<Person> person = personService.updatePerson(id, personRequest);
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivatePerson(@PathVariable("id") Long id) {
         personService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePerson(@PathVariable("id") Long id) {
         personService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Person>> restoreDeletedPerson(@PathVariable("id") Long id) {
-        Optional<Person> person = personService.restoreDeletedPerson(id);
+    public ResponseEntity<Optional<Person>> activatePerson(@PathVariable("id") Long id) {
+        Optional<Person> person = personService.activatePerson(id);
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
 

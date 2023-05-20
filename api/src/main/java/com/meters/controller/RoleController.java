@@ -5,10 +5,6 @@ import com.meters.entities.Role;
 import com.meters.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,52 +31,38 @@ public class RoleController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
-    @GetMapping("/page/{page}")
-    public ResponseEntity<Object> getAllRolesWithPageAndSort(@PathVariable int page) {
-
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
-
-        Page<Role> roles = roleService.findAll(pageable);
-
-        if (roles.hasContent()) {
-            return new ResponseEntity<>(roles, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Role>> getRoleById(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Role>> createRole(@Valid @RequestBody RoleRequest roleRequest) {
         Optional<Role> role = roleService.createRole(roleRequest);
         return new ResponseEntity<>(role, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Role>> updateRole(@Valid @RequestBody RoleRequest roleRequest, @PathVariable("id") Long id) {
         Optional<Role> role = roleService.updateRole(id, roleRequest);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateRole(@PathVariable("id") Long id) {
         roleService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRole(@PathVariable("id") Long id) {
         roleService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Role>> restoreDeletedRole(@PathVariable("id") Long id) {
-        Optional<Role> role = roleService.restoreDeletedRole(id);
+    public ResponseEntity<Optional<Role>> activateRole(@PathVariable("id") Long id) {
+        Optional<Role> role = roleService.activateRole(id);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 }

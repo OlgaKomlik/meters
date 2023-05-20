@@ -18,7 +18,7 @@ public interface RentService {
     Page<Rent> findAll(Pageable pageable);
 
     Optional<Rent> findById(Long id);
-    Optional<Rent> restoreDeletedRent(Long id);
+    Optional<Rent> activateRent(Long id);
 
     void deleteById(Long id);
     Rent deactivate(Long id);

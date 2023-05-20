@@ -17,7 +17,7 @@ public interface DealService {
     List<Deal> findAll();
     Page<Deal> findAll(Pageable pageable);
     Optional<Deal> findById(Long id);
-    Optional<Deal> restoreDeletedDeal(Long id);
+    Optional<Deal> activateDeal(Long id);
 
     void deleteById(Long id);
     Deal deactivate(Long id);

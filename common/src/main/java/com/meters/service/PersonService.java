@@ -18,7 +18,7 @@ public interface PersonService {
     Page<Person> findAll(Pageable pageable);
 
     Optional<Person> findById(Long id);
-    Optional<Person> restoreDeletedPerson(Long id);
+    Optional<Person> activatePerson(Long id);
 
     void deleteById(Long id);
     Person deactivate(Long id);

@@ -19,7 +19,7 @@ public interface RoleService {
     Page<Role> findAll(Pageable pageable);
 
     Optional<Role> findById(Long id);
-    Optional<Role> restoreDeletedRole(Long id);
+    Optional<Role> activateRole(Long id);
 
     void deleteById(Long id);
     Role deactivate(Long id);

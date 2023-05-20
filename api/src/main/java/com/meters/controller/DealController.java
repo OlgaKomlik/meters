@@ -5,6 +5,7 @@ import com.meters.entities.Deal;
 import com.meters.service.DealService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,9 @@ public class DealController {
 
     private final DealService dealService;
 
+    @Value("${deal.page-capacity}")
+    private Integer pageCapacity;
+
     @GetMapping
     public ResponseEntity<Object> getAllDeals() {
         List<Deal> deals = dealService.findAll();
@@ -40,7 +44,7 @@ public class DealController {
     @GetMapping("/page/{page}")
     public ResponseEntity<Object> getAllDealsWithPageAndSort(@PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
         Page<Deal> deals = dealService.findAll(pageable);
 
@@ -55,33 +59,33 @@ public class DealController {
         return ResponseEntity.ok(dealService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Deal>> createDeal(@Valid @RequestBody DealRequest dealRequest) {
         Optional<Deal> deal = dealService.createDeal(dealRequest);
         return new ResponseEntity<>(deal, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Deal>> updateDeal(@Valid @RequestBody DealRequest dealRequest, @PathVariable("id") Long id) {
         Optional<Deal> deal = dealService.updateDeal(id, dealRequest);
         return new ResponseEntity<>(deal, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateDeal(@PathVariable("id") Long id) {
         dealService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDeal(@PathVariable("id") Long id) {
         dealService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Deal>> restoreDeletedDeal(@PathVariable("id") Long id) {
-        Optional<Deal> deal = dealService.restoreDeletedDeal(id);
+    public ResponseEntity<Optional<Deal>> activateDeal(@PathVariable("id") Long id) {
+        Optional<Deal> deal = dealService.activateDeal(id);
         return new ResponseEntity<>(deal, HttpStatus.OK);
     }
 }

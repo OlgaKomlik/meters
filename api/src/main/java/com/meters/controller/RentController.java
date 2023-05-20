@@ -5,6 +5,7 @@ import com.meters.entities.Rent;
 import com.meters.service.RentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,9 @@ public class RentController {
 
     private final RentService rentService;
 
+    @Value("${rent.page-capacity}")
+    private Integer pageCapacity;
+
     @GetMapping
     public ResponseEntity<Object> getAllRents() {
         List<Rent> rents = rentService.findAll();
@@ -39,7 +43,7 @@ public class RentController {
     @GetMapping("/page/{page}")
     public ResponseEntity<Object> getAllRentsWithPageAndSort(@PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
         Page<Rent> rents = rentService.findAll(pageable);
 
@@ -55,33 +59,33 @@ public class RentController {
         return ResponseEntity.ok(rentService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Rent>> createRent(@Valid @RequestBody RentRequest rentRequest) {
         Optional<Rent> rent = rentService.createRent(rentRequest);
         return new ResponseEntity<>(rent, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Rent>> updateRent(@Valid @RequestBody RentRequest rentRequest, @PathVariable("id") Long id) {
         Optional<Rent> rent = rentService.updateRent(id, rentRequest);
         return new ResponseEntity<>(rent, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateRent(@PathVariable("id") Long id) {
         rentService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRent(@PathVariable("id") Long id) {
         rentService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Rent>> restoreDeletedRent(@PathVariable("id") Long id) {
-        Optional<Rent> rent = rentService.restoreDeletedRent(id);
+    public ResponseEntity<Optional<Rent>> activateRent(@PathVariable("id") Long id) {
+        Optional<Rent> rent = rentService.activateRent(id);
         return new ResponseEntity<>(rent, HttpStatus.OK);
     }
 }

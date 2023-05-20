@@ -21,6 +21,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.cache.annotation.Cacheable;
+
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Set;
@@ -31,6 +33,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Cacheable("c_object_type")
 @Table(name = "c_object_type")
 public class ObjectType {
     @Id

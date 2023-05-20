@@ -37,33 +37,33 @@ public class ObjectTypeController {
         return ResponseEntity.ok(objectTypeService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<ObjectType>> createObjectType(@Valid @RequestBody ObjectTypeRequest objectTypeRequest) {
         Optional<ObjectType> objectType = objectTypeService.createObjectType(objectTypeRequest);
         return new ResponseEntity<>(objectType, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<ObjectType>> updateObjectType(@Valid @RequestBody ObjectTypeRequest objectTypeRequest, @PathVariable("id") Long id) {
         Optional<ObjectType> objectType = objectTypeService.updateObjectType(id, objectTypeRequest);
         return new ResponseEntity<>(objectType, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateObjectType(@PathVariable("id") Long id) {
         objectTypeService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteObjectType(@PathVariable("id") Long id) {
         objectTypeService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<ObjectType>> restoreDeletedObjectType(@PathVariable("id") Long id) {
-        Optional<ObjectType> objectType = objectTypeService.restoreDeletedObjectType(id);
+    public ResponseEntity<Optional<ObjectType>> activateObjectType(@PathVariable("id") Long id) {
+        Optional<ObjectType> objectType = objectTypeService.activateObjectType(id);
         return new ResponseEntity<>(objectType, HttpStatus.OK);
     }
 }

@@ -9,6 +9,7 @@ import com.meters.repository.catalogs.ObjectTypeRepository;
 import com.meters.service.catalogs.ObjectTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     private final ObjectTypeMapper objectTypeMapper;
 
     @Override
+    @Transactional
     public Optional<ObjectType> createObjectType(ObjectTypeRequest objectTypeRequest) {
         ObjectType objectType = objectTypeMapper.toEntity(objectTypeRequest);
         objectType.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -31,6 +33,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
+    @Transactional
     public Optional<ObjectType> updateObjectType(Long id, ObjectTypeRequest objectTypeRequest) {
         ObjectType objectType = findObjectType(id);
         objectTypeMapper.updateObjectType(objectTypeRequest, objectType);
@@ -52,7 +55,8 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
-    public Optional<ObjectType> restoreDeletedObjectType(Long id) {
+    @Transactional
+    public Optional<ObjectType> activateObjectType(Long id) {
         ObjectType objectType = findObjectType(id);
         objectType.setDeleted(false);
         objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -65,6 +69,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
+    @Transactional
     public ObjectType deactivate(Long id) {
         ObjectType objectType = findObjectType(id);
         objectType.setDeleted(true);

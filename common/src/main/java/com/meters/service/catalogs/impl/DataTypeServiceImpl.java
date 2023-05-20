@@ -10,6 +10,7 @@ import com.meters.repository.catalogs.DealTypeRepository;
 import com.meters.service.catalogs.DealTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class DataTypeServiceImpl implements DealTypeService {
     private final DealTypeMapper dealTypeMapper;
 
     @Override
+    @Transactional
     public Optional<DealType> createDealType(DealTypeRequest dealTypeRequest) {
         DealType dealType = dealTypeMapper.toEntity(dealTypeRequest);
         dealType.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -33,6 +35,7 @@ public class DataTypeServiceImpl implements DealTypeService {
     }
 
     @Override
+    @Transactional
     public Optional<DealType> updateDealType(Long id, DealTypeRequest dealTypeRequest) {
         DealType dealType = findDealType(id);
         dealTypeMapper.updateDealType(dealTypeRequest, dealType);
@@ -54,7 +57,8 @@ public class DataTypeServiceImpl implements DealTypeService {
     }
 
     @Override
-    public Optional<DealType> restoreDeletedDealType(Long id) {
+    @Transactional
+    public Optional<DealType> activateDealType(Long id) {
         DealType dealType = findDealType(id);
         dealType.setDeleted(false);
         dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -67,6 +71,7 @@ public class DataTypeServiceImpl implements DealTypeService {
     }
 
     @Override
+    @Transactional
     public DealType deactivate(Long id) {
         DealType dealType = findDealType(id);
         dealType.setDeleted(true);

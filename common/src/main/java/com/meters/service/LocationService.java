@@ -20,7 +20,7 @@ public interface LocationService {
     Page<Location> findAll(Pageable pageable);
 
     Optional<Location> findById(Long id);
-    Optional<Location> restoreDeletedLocation(Long id);
+    Optional<Location> activateLocation(Long id);
 
     void deleteById(Long id);
     Location deactivate(Long id);

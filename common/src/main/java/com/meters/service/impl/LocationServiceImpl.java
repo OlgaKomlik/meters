@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class LocationServiceImpl implements LocationService {
     private final LocationMapper locationMapper;
 
     @Override
+    @Transactional
     public Optional<Location> createLocation(LocationRequest locationRequest) {
         Location location = locationMapper.toEntity(locationRequest);
         location.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -33,6 +35,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public Optional<Location> updateLocation(Long id, LocationRequest locationRequest) {
         Location location = findLocation(id);
         locationMapper.updateLocation(locationRequest, location);
@@ -59,7 +62,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Optional<Location> restoreDeletedLocation(Long id) {
+    @Transactional
+    public Optional<Location> activateLocation(Long id) {
         Location location = findLocation(id);
         location.setDeleted(false);
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -72,6 +76,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public Location deactivate(Long id) {
         Location location = findLocation(id);
         location.setDeleted(true);

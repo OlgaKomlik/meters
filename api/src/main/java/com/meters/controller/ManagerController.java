@@ -5,6 +5,7 @@ import com.meters.entities.Manager;
 import com.meters.service.ManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,9 @@ import java.util.Optional;
 public class ManagerController {
     private final ManagerService managerService;
 
+    @Value("${manager.page-capacity}")
+    private Integer pageCapacity;
+
     @GetMapping
     public ResponseEntity<Object> getAllManagers() {
         List<Manager> managers = managerService.findAll();
@@ -41,7 +45,7 @@ public class ManagerController {
     @GetMapping("/page/{page}")
     public ResponseEntity<Object> getAllManagersWithPageAndSort(@PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
         Page<Manager> managers = managerService.findAll(pageable);
 
@@ -57,33 +61,33 @@ public class ManagerController {
         return ResponseEntity.ok(managerService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Manager>> createManager(@Valid @RequestBody ManagerRequest managerRequest) {
         Optional<Manager> manager = managerService.createManager(managerRequest);
         return new ResponseEntity<>(manager, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Manager>> updateManager(@Valid @RequestBody ManagerRequest managerRequest, @PathVariable("id") Long id) {
         Optional<Manager> manager = managerService.updateManager(id, managerRequest);
         return new ResponseEntity<>(manager, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateManager(@PathVariable("id") Long id) {
         managerService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteManager(@PathVariable("id") Long id) {
         managerService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Manager>> restoreDeletedManager(@PathVariable("id") Long id) {
-        Optional<Manager> manager = managerService.restoreDeletedManager(id);
+    public ResponseEntity<Optional<Manager>> activateManager(@PathVariable("id") Long id) {
+        Optional<Manager> manager = managerService.activateManager(id);
         return new ResponseEntity<>(manager, HttpStatus.OK);
     }
 
@@ -113,4 +117,9 @@ public class ManagerController {
     public ResponseEntity<Object> findBestSeller(@RequestParam int month, int year) {
         return ResponseEntity.ok(managerService.getBestSellerOfTheMonth(month, year));
     }
+
+/*    @GetMapping("/best_month_sellers")
+    public ResponseEntity<Object> findBestSellers(@RequestParam int month, int year) {
+        return ResponseEntity.ok(managerService.getBestSellersOfTheMonth(month, year));
+    }*/
 }

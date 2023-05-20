@@ -5,6 +5,8 @@ import com.meters.entities.Company;
 import com.meters.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,9 @@ import java.util.Optional;
 public class CompanyController {
     private final CompanyService companyService;
 
+    @Value("${company.page-capacity}")
+    private Integer pageCapacity;
+
     @GetMapping
     public ResponseEntity<Object> getAllCompanies() {
         List<Company> companies = companyService.findAll();
@@ -39,7 +44,7 @@ public class CompanyController {
     @GetMapping("/page/{page}")
     public ResponseEntity<Object> getAllCompaniesWithPageAndSort(@PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
         Page<Company> companies = companyService.findAll(pageable);
 
@@ -55,33 +60,33 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Company>> createCompany(@Valid @RequestBody CompanyRequest companyRequest) {
         Optional<Company> company = companyService.createCompany(companyRequest);
         return new ResponseEntity<>(company, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Company>> updateCompany(@Valid @RequestBody CompanyRequest companyRequest, @PathVariable("id") Long id) {
         Optional<Company> company = companyService.updateCompany(id, companyRequest);
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateCompany(@PathVariable("id") Long id) {
         companyService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCompany(@PathVariable("id") Long id) {
         companyService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Company>> restoreDeletedCompany(@PathVariable("id") Long id) {
-        Optional<Company> company = companyService.restoreDeletedCompany(id);
+    public ResponseEntity<Optional<Company>> activateCompany(@PathVariable("id") Long id) {
+        Optional<Company> company = companyService.activateCompany(id);
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyMapper companyMapper;
 
     @Override
+    @Transactional
     public Optional<Company> createCompany(CompanyRequest companyRequest) {
         Company company = companyMapper.toEntity(companyRequest);
         company.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -32,6 +34,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public Optional<Company> updateCompany(Long id, CompanyRequest companyRequest) {
         Company company = findCompany(id);
         companyMapper.updateCompany(companyRequest, company);
@@ -58,7 +61,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Optional<Company> restoreDeletedCompany(Long id) {
+    @Transactional
+    public Optional<Company> activateCompany(Long id) {
         Company company = findCompany(id);
         company.setDeleted(false);
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -71,6 +75,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public Company deactivate(Long id) {
         Company company = findCompany(id);
         company.setDeleted(true);

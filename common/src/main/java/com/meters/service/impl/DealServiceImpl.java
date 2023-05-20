@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class DealServiceImpl implements DealService {
     private final DealMapper dealMapper;
 
     @Override
+    @Transactional
     public Optional<Deal> createDeal(DealRequest dealRequest) {
         Deal deal = dealMapper.toEntity(dealRequest);
         deal.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -33,6 +35,7 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
+    @Transactional
     public Optional<Deal> updateDeal(Long id, DealRequest dealRequest) {
         Deal deal = findDeal(id);
         dealMapper.updateDeal(dealRequest, deal);
@@ -59,7 +62,8 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public Optional<Deal> restoreDeletedDeal(Long id) {
+    @Transactional
+    public Optional<Deal> activateDeal(Long id) {
         Deal deal = findDeal(id);
         deal.setDeleted(false);
         deal.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -72,6 +76,7 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
+    @Transactional
     public Deal deactivate(Long id) {
         Deal deal = findDeal(id);
         deal.setDeleted(true);

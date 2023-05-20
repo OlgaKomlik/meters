@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class RentServiceImpl implements RentService {
     private final RentMapper rentMapper;
 
     @Override
+    @Transactional
     public Optional<Rent> createRent(RentRequest rentRequest) {
         Rent rent = rentMapper.toEntity(rentRequest);
         rent.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -32,6 +34,7 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
+    @Transactional
     public Optional<Rent> updateRent(Long id, RentRequest rentRequest) {
         Rent rent = findRent(id);
         rentMapper.updateRent(rentRequest, rent);
@@ -58,7 +61,8 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
-    public Optional<Rent> restoreDeletedRent(Long id) {
+    @Transactional
+    public Optional<Rent> activateRent(Long id) {
         Rent rent = findRent(id);
         rent.setDeleted(false);
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -71,6 +75,7 @@ public class RentServiceImpl implements RentService {
     }
 
     @Override
+    @Transactional
     public Rent deactivate(Long id) {
         Rent rent = findRent(id);
         rent.setDeleted(true);

@@ -17,7 +17,7 @@ public interface RealEstateService {
     Page<RealEstate> findAll(Pageable pageable);
 
     Optional<RealEstate> findById(Long id);
-    Optional<RealEstate> restoreDeletedRealEstate(Long id);
+    Optional<RealEstate> activateRealEstate(Long id);
 
     void deleteById(Long id);
     RealEstate deactivate(Long id);

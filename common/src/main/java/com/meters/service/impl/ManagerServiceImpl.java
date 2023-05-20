@@ -11,16 +11,20 @@ import com.meters.repository.RoleRepository;
 import com.meters.service.ManagerService;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 @RequiredArgsConstructor
 @Service
@@ -51,6 +55,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public Optional<Manager> createManager(ManagerRequest managerRequest) {
         Manager manager = managerMapper.toEntity(managerRequest);
         manager.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -61,6 +66,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public Optional<Manager> updateManager(Long id, ManagerRequest managerRequest) {
         Manager manager = findManager(id);
         managerMapper.updateManager(managerRequest, manager);
@@ -73,6 +79,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
+    @Transactional
     public Manager deactivate(Long id) {
         Manager manager = findManager(id);
         manager.setDeleted(true);
@@ -81,7 +88,8 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Optional<Manager> restoreDeletedManager(Long id) {
+    @Transactional
+    public Optional<Manager> activateManager(Long id) {
         Manager manager = findManager(id);
         manager.setDeleted(false);
         manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -91,6 +99,8 @@ public class ManagerServiceImpl implements ManagerService {
         return managerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Manager could not be found"));
     }
 
+    @Override
+    @Transactional
     public Optional<Manager> setUserRole(Long managerId, String roleName) {
         Manager manager = findManager(managerId);
         Role managerRole = roleRepository.findByRoleName(roleName).orElseThrow(() -> new EntityNotFoundException("Role not exist"));
@@ -98,29 +108,36 @@ public class ManagerServiceImpl implements ManagerService {
         return Optional.of(managerRepository.save(manager));
     }
 
-
+    @Override
     public List<Manager> findBirthDayManagers(LocalDateTime localDateTime) {
         Integer day = localDateTime.getDayOfMonth();
         Integer month = localDateTime.getMonthValue();
     return managerRepository.findBirthDayManagers(day, month);
     }
 
+    @Override
     public Map<String, Double> getAverageFeeOfManagers() {
         List<Object[]> result = managerRepository.getAverageFeeOfManagers();
-        Map<String, Double> managersFee = new HashMap<>();
+        Map<String, Double> managersFee = new LinkedHashMap<>();
         for (Object[] row : result) {
             Manager manager = managerRepository.findById((Long) row[0]).orElseThrow(() -> new EntityNotFoundException("Manager could not be found"));
-            Double averageFee = (Double) row[1];
+            Double averageFee = Math.ceil((Double) row[1]);
             managersFee.put(manager.getFullName(), averageFee);
         }
         return managersFee;
     }
 
+    @Override
     public List<Manager> findByFullNameContainingIgnoreCase(String query) {
         return managerRepository.findByFullNameContainingIgnoreCase(query);
     }
 
+    @Override
     public Manager getBestSellerOfTheMonth(int month, int year) {
         return managerRepository.getBestSellerOfTheMonth(month, year);
     }
+
+/*    public List<Object []> getBestSellersOfTheMonth(int month, int year) {
+        return managerRepository.getBestSellersOfTheMonth(month, year);
+    }*/
 }

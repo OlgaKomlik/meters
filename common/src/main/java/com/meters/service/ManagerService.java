@@ -20,7 +20,7 @@ public interface ManagerService {
     Page<Manager> findAll(Pageable pageable);
 
     Optional<Manager> findById(Long id);
-    Optional<Manager> restoreDeletedManager(Long id);
+    Optional<Manager> activateManager(Long id);
 
     void deleteById(Long id);
     Manager deactivate(Long id);
@@ -33,4 +33,6 @@ public interface ManagerService {
     List<Manager> findByFullNameContainingIgnoreCase(String query);
 
     Manager getBestSellerOfTheMonth(int month, int year);
+
+  /*  List<Object []> getBestSellersOfTheMonth(int month, int year);*/
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class SaleServiceImpl implements SaleService {
     private final SaleMapper saleMapper;
 
     @Override
+    @Transactional
     public Optional<Sale> createSale(SaleRequest saleRequest) {
         Sale sale = saleMapper.toEntity(saleRequest);
         sale.setCreated(Timestamp.valueOf(LocalDateTime.now()));
@@ -33,6 +35,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    @Transactional
     public Optional<Sale> updateSale(Long id, SaleRequest saleRequest) {
         Sale sale = findSale(id);
         saleMapper.updateSale(saleRequest, sale);
@@ -58,7 +61,8 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public Optional<Sale> restoreDeletedSale(Long id) {
+    @Transactional
+    public Optional<Sale> activateSale(Long id) {
         Sale sale = findSale(id);
         sale.setDeleted(false);
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
@@ -71,6 +75,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    @Transactional
     public Sale deactivate(Long id) {
         Sale sale = findSale(id);
         sale.setDeleted(true);

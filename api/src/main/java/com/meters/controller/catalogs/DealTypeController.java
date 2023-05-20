@@ -38,33 +38,33 @@ public class DealTypeController {
         return ResponseEntity.ok(dealTypeService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<DealType>> createDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest) {
         Optional<DealType> dealType = dealTypeService.createDealType(dealTypeRequest);
         return new ResponseEntity<>(dealType, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<DealType>> updateDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest, @PathVariable("id") Long id) {
         Optional<DealType> dealType = dealTypeService.updateDealType(id, dealTypeRequest);
         return new ResponseEntity<>(dealType, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateDealType(@PathVariable("id") Long id) {
         dealTypeService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDealType(@PathVariable("id") Long id) {
         dealTypeService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<DealType>> restoreDeletedDealType(@PathVariable("id") Long id) {
-        Optional<DealType> dealType = dealTypeService.restoreDeletedDealType(id);
+    public ResponseEntity<Optional<DealType>> activateDealType(@PathVariable("id") Long id) {
+        Optional<DealType> dealType = dealTypeService.activateDealType(id);
         return new ResponseEntity<>(dealType, HttpStatus.OK);
     }
 }

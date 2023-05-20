@@ -21,7 +21,7 @@ spring:
     url: ${spring.datasource.url}
     default-schema: public
     out-of-order: true
-    ignore-migration-patterns: '*:ignored'
+    validate-on-migrate: false
 
   jpa:
     show-sql: true
@@ -33,7 +33,34 @@ spring:
 
 
 ---
+  caffeine:
+    initialCapacity: 30
+    maximumSize: 1000
+    expireAfterAccessHours: 12
 
+---
 
+  company:
+    page-capacity: 10
 
+  deal:
+    page-capacity: 4
+
+  location:
+    page-capacity: 15
+
+  manager:
+    page-capacity: 10
+
+  person:
+    page-capacity: 10
+
+  real-estate:
+    page-capacity: 8
+
+  rent:
+    page-capacity: 15
+
+  sale:
+    page-capacity: 15
 

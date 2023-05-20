@@ -5,6 +5,7 @@ import com.meters.entities.Location;
 import com.meters.service.LocationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,9 @@ import java.util.Optional;
 public class LocationController {
     private final LocationService locationService;
 
+    @Value("${location.page-capacity}")
+    private Integer pageCapacity;
+
     @GetMapping
     public ResponseEntity<Object> getAllLocations() {
         List<Location> locations = locationService.findAll();
@@ -39,7 +43,7 @@ public class LocationController {
     @GetMapping("/page/{page}")
     public ResponseEntity<Object> getAllLocationsWithPageAndSort(@PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
         Page<Location> locations = locationService.findAll(pageable);
 
@@ -55,33 +59,33 @@ public class LocationController {
         return ResponseEntity.ok(locationService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Optional<Location>> createLocation(@Valid @RequestBody LocationRequest locationRequest) {
         Optional<Location> location = locationService.createLocation(locationRequest);
         return new ResponseEntity<>(location, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<Location>> updateLocation(@Valid @RequestBody LocationRequest locationRequest, @PathVariable("id") Long id) {
         Optional<Location> location = locationService.updateLocation(id, locationRequest);
         return new ResponseEntity<>(location, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/soft_delete")
+    @PutMapping("/{id}/deactivate")
     public ResponseEntity<String> deactivateLocation(@PathVariable("id") Long id) {
         locationService.deactivate(id);
         return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLocation(@PathVariable("id") Long id) {
         locationService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Location>> restoreDeletedLocation(@PathVariable("id") Long id) {
-        Optional<Location> location = locationService.restoreDeletedLocation(id);
+    public ResponseEntity<Optional<Location>> activateLocation(@PathVariable("id") Long id) {
+        Optional<Location> location = locationService.activateLocation(id);
         return new ResponseEntity<>(location, HttpStatus.OK);
     }
 }

@@ -17,7 +17,7 @@ public interface CompanyService {
 
     Page<Company> findAll(Pageable pageable);
     Optional<Company> findById(Long id);
-    Optional<Company> restoreDeletedCompany(Long id);
+    Optional<Company> activateCompany(Long id);
 
     void deleteById(Long id);
     Company deactivate(Long id);
