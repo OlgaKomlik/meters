@@ -1,7 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.requests.CompanyRequest;
+import com.meters.requests.create.CompanyRequest;
 import com.meters.entities.Company;
+import com.meters.requests.update.CompanyUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class CompanyMapper {
         return company;
     }
 
-    public Company updateCompany(CompanyRequest companyRequest, Company company) {
+    public Company updateCompany(CompanyUpdateRequest companyRequest, Company company) {
 
         if(companyRequest.getCompanyName() != null) {
             company.setCompanyName(companyRequest.getCompanyName());
@@ -50,6 +51,10 @@ public class CompanyMapper {
         if(companyRequest.getBankName() != null) {
             company.setBankName(companyRequest.getBankName());
         }
+        if (companyRequest.getIsDeleted() != null){
+            company.setDeleted(companyRequest.getIsDeleted());
+        }
+
         company.setDirectorFullName(company.getDirectorName() + " " + company.getDirectorSurname());
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

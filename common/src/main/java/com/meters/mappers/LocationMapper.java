@@ -1,7 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.requests.LocationRequest;
+import com.meters.requests.create.LocationRequest;
 import com.meters.entities.Location;
+import com.meters.requests.update.LocationUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class LocationMapper {
         return modelMapper.map(locationRequest, Location.class);
     }
 
-    public Location updateLocation(LocationRequest locationRequest, Location location) {
+    public Location updateLocation(LocationUpdateRequest locationRequest, Location location) {
         if(locationRequest.getCountry() != null) {
             location.setCountry(locationRequest.getCountry());
         }
@@ -31,7 +32,9 @@ public class LocationMapper {
         if(locationRequest.getRegion() != null) {
             location.setRegion(locationRequest.getRegion());
         }
-
+        if (locationRequest.getIsDeleted() != null){
+            location.setDeleted(locationRequest.getIsDeleted());
+        }
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 
         return location;

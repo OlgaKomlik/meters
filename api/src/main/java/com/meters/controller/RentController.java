@@ -1,9 +1,11 @@
 package com.meters.controller;
 
-import com.meters.requests.RentRequest;
+import com.meters.requests.create.RentRequest;
 import com.meters.entities.Rent;
+import com.meters.requests.update.RentUpdateRequest;
 import com.meters.service.RentService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -31,17 +35,17 @@ public class RentController {
 
     private final RentService rentService;
 
-    @Value("${rent.page-capacity}")
+    @Value("${page-capacity.rent}")
     private Integer pageCapacity;
 
     @GetMapping
-    public ResponseEntity<Object> getAllRents() {
+    public ResponseEntity<List<Rent>> getAllRents() {
         List<Rent> rents = rentService.findAll();
         return new ResponseEntity<>(rents, HttpStatus.OK);
     }
 
     @GetMapping("/page/{page}")
-    public ResponseEntity<Object> getAllRentsWithPageAndSort(@PathVariable int page) {
+    public ResponseEntity<Page<Rent>> getAllRentsWithPageAndSort(@PathVariable int page) {
 
         Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
@@ -55,37 +59,46 @@ public class RentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Rent>> getRentById(@PathVariable Long id) {
-        return ResponseEntity.ok(rentService.findById(id));
+    public ResponseEntity<Rent> getRentById(@PathVariable Long id) {
+
+        Optional<Rent> rent = rentService.findById(id);
+        if(rent.isPresent()) {
+            return new ResponseEntity<> (rent.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<Rent>> createRent(@Valid @RequestBody RentRequest rentRequest) {
-        Optional<Rent> rent = rentService.createRent(rentRequest);
+    @PostMapping
+    public ResponseEntity<Rent> createRent(@Valid @RequestBody RentRequest rentRequest,
+                                           BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Rent rent = rentService.createRent(rentRequest);
         return new ResponseEntity<>(rent, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<Rent>> updateRent(@Valid @RequestBody RentRequest rentRequest, @PathVariable("id") Long id) {
-        Optional<Rent> rent = rentService.updateRent(id, rentRequest);
-        return new ResponseEntity<>(rent, HttpStatus.OK);
-    }
+    public ResponseEntity<Rent> updateRent(@Valid @RequestBody RentUpdateRequest rentRequest,
+                                           @PathVariable("id") Long id, BindingResult bindingResult) {
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivateRent(@PathVariable("id") Long id) {
-        rentService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Rent rent = rentService.updateRent(id, rentRequest);
+        return new ResponseEntity<>(rent, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRent(@PathVariable("id") Long id) {
         rentService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Rent>> activateRent(@PathVariable("id") Long id) {
-        Optional<Rent> rent = rentService.activateRent(id);
-        return new ResponseEntity<>(rent, HttpStatus.OK);
     }
 }

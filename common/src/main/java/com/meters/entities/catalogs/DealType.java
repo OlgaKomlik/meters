@@ -24,6 +24,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -47,10 +48,10 @@ public class DealType {
     @Column(name = "type_name", nullable = false, length = 30)
     private String typeName;
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

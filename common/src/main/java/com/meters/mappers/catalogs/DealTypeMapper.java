@@ -1,6 +1,6 @@
 package com.meters.mappers.catalogs;
 
-import com.meters.requests.catalogs.DealTypeRequest;
+import com.meters.requests.create.catalogs.DealTypeRequest;
 import com.meters.entities.catalogs.DealType;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

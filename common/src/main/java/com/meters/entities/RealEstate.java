@@ -29,6 +29,7 @@ import lombok.ToString;
 
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -63,16 +64,17 @@ public class RealEstate {
 
     @Column(name = "garage")
     private Boolean garage;
+
     @Size(max = 30)
     @NotNull
     @Column(name = "address", nullable = false, length = 30)
     private String address;
 
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

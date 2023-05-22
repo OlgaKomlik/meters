@@ -1,6 +1,6 @@
 package com.meters.service.impl;
 
-import com.meters.requests.ManagerRequest;
+import com.meters.requests.create.ManagerRequest;
 import com.meters.entities.Manager;
 import com.meters.entities.Role;
 import com.meters.mappers.ManagerMapper;
@@ -8,32 +8,37 @@ import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.ManagerRepository;
 import com.meters.repository.RoleRepository;
+import com.meters.requests.update.ManagerUpdateRequest;
 import com.meters.service.ManagerService;
 
+import com.meters.service.email.EmailSenderService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 @RequiredArgsConstructor
 @Service
 public class ManagerServiceImpl implements ManagerService {
-    private static final Long DEFAULT_ROLE_ID = 1L;
+
+    private static final String DEFAULT_ROLE = "ROLE_USER";
 
     private final ManagerRepository managerRepository;
+
     private final ManagerMapper managerMapper;
+
     private final RoleRepository roleRepository;
+
+    private final EmailSenderService emailSenderService;
 
     @Override
     public List<Manager> findAll() {
@@ -56,21 +61,21 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     @Transactional
-    public Optional<Manager> createManager(ManagerRequest managerRequest) {
+    public Manager createManager(ManagerRequest managerRequest) {
         Manager manager = managerMapper.toEntity(managerRequest);
         manager.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        Role role = roleRepository.findById(DEFAULT_ROLE_ID).orElseThrow(() -> new EntityNotFoundException("Role not exist"));
+        Role role = roleRepository.findByRoleName(DEFAULT_ROLE).orElseThrow(() -> new EntityNotFoundException("Role not exist"));
         manager.getRoles().add(role);
-        return Optional.of(managerRepository.save(manager));
+        return managerRepository.save(manager);
     }
 
     @Override
     @Transactional
-    public Optional<Manager> updateManager(Long id, ManagerRequest managerRequest) {
+    public Manager updateManager(Long id, ManagerUpdateRequest managerRequest) {
         Manager manager = findManager(id);
         managerMapper.updateManager(managerRequest, manager);
-        return Optional.of(managerRepository.save(manager));
+        return managerRepository.save(manager);
     }
 
     @Override
@@ -78,34 +83,17 @@ public class ManagerServiceImpl implements ManagerService {
         managerRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Manager deactivate(Long id) {
-        Manager manager = findManager(id);
-        manager.setDeleted(true);
-        manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return managerRepository.save(manager);
-    }
-
-    @Override
-    @Transactional
-    public Optional<Manager> activateManager(Long id) {
-        Manager manager = findManager(id);
-        manager.setDeleted(false);
-        manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(managerRepository.save(manager));
-    }
     private Manager findManager(Long id) {
         return managerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Manager could not be found"));
     }
 
     @Override
     @Transactional
-    public Optional<Manager> setUserRole(Long managerId, String roleName) {
+    public Manager setUserRole(Long managerId, String roleName) {
         Manager manager = findManager(managerId);
         Role managerRole = roleRepository.findByRoleName(roleName).orElseThrow(() -> new EntityNotFoundException("Role not exist"));
         manager.getRoles().add(managerRole);
-        return Optional.of(managerRepository.save(manager));
+        return managerRepository.save(manager);
     }
 
     @Override
@@ -127,17 +115,24 @@ public class ManagerServiceImpl implements ManagerService {
         return managersFee;
     }
 
+    @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Transactional
+    public void sendEmailToBirthDayManagers() {
+        List<Manager> managers = findBirthDayManagers(LocalDateTime.now());
+        String subject = "Happy birthday!";
+        for (Manager manager : managers) {
+            String message = "Happy birthday dear " + manager.getFullName() + "! Meters Company wishes you prosperity, success in your work and the fulfillment of all your desires.\n" +
+                    "Best regards, Meters team";
+            emailSenderService.sendEmail(manager.getAuthenticationInfo().getEmail(), subject, message);
+        }
+    }
+
     @Override
     public List<Manager> findByFullNameContainingIgnoreCase(String query) {
         return managerRepository.findByFullNameContainingIgnoreCase(query);
     }
 
-    @Override
-    public Manager getBestSellerOfTheMonth(int month, int year) {
-        return managerRepository.getBestSellerOfTheMonth(month, year);
-    }
-
-/*    public List<Object []> getBestSellersOfTheMonth(int month, int year) {
+    public List<Manager> getBestSellersOfTheMonth(int month, int year) {
         return managerRepository.getBestSellersOfTheMonth(month, year);
-    }*/
+    }
 }

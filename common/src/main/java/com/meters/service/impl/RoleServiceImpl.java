@@ -1,9 +1,10 @@
 package com.meters.service.impl;
 
-import com.meters.requests.RoleRequest;
+import com.meters.requests.create.RoleRequest;
 import com.meters.entities.Role;
 import com.meters.mappers.RoleMapper;
 import com.meters.repository.RoleRepository;
+import com.meters.requests.update.RoleUpdateRequest;
 import com.meters.service.RoleService;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -27,19 +28,19 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public Optional<Role> createRole(RoleRequest roleRequest) {
+    public Role createRole(RoleRequest roleRequest) {
         Role role = roleMapper.toEntity(roleRequest);
         role.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(roleRepository.save(role));
+        return roleRepository.save(role);
     }
 
     @Override
     @Transactional
-    public Optional<Role> updateRole(Long id, RoleRequest roleRequest) {
+    public Role updateRole(Long id, RoleUpdateRequest roleRequest) {
         Role role = findRole(id);
         roleMapper.updateRole(roleRequest, role);
-        return Optional.of(roleRepository.save(role));
+        return roleRepository.save(role);
     }
 
     @Override
@@ -62,27 +63,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional
-    public Optional<Role> activateRole(Long id) {
-        Role role = findRole(id);
-        role.setDeleted(false);
-        role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(roleRepository.save(role));
-    }
-
-    @Override
     public void deleteById(Long id) {
         roleRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Role deactivate(Long id) {
-        Role role = findRole(id);
-        role.setDeleted(true);
-        role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return roleRepository.save(role);
-    }
+
 
     private Role findRole(Long id) {
         return roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role could not be found"));

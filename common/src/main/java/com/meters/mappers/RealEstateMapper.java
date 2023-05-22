@@ -1,6 +1,6 @@
 package com.meters.mappers;
 
-import com.meters.requests.RealEstateRequest;
+import com.meters.requests.create.RealEstateRequest;
 import com.meters.entities.RealEstate;
 import com.meters.entities.constants.ClientType;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +8,7 @@ import com.meters.repository.CompanyRepository;
 import com.meters.repository.LocationRepository;
 import com.meters.repository.PersonRepository;
 import com.meters.repository.catalogs.ObjectTypeRepository;
+import com.meters.requests.update.RealEstateUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class RealEstateMapper {
         return realEstate;
     }
 
-    public RealEstate updateRealEstate(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+    public RealEstate updateRealEstate(RealEstateUpdateRequest realEstateRequest, RealEstate realEstate) {
         if(realEstateRequest.getSquare() != null) {
             realEstate.setSquare(realEstateRequest.getSquare());
         }
@@ -65,7 +66,9 @@ public class RealEstateMapper {
         if(realEstateRequest.getObjectType() != null) {
             setObjectType(realEstateRequest, realEstate);
         }
-
+        if (realEstateRequest.getIsDeleted() != null){
+            realEstate.setDeleted(realEstateRequest.getIsDeleted());
+        }
 
 
         realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));

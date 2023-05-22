@@ -1,11 +1,12 @@
 package com.meters.service.impl;
 
-import com.meters.requests.SaleRequest;
+import com.meters.requests.create.SaleRequest;
 import com.meters.entities.Sale;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.SaleMapper;
 import com.meters.repository.SaleRepository;
+import com.meters.requests.update.SaleUpdateRequest;
 import com.meters.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,19 +28,19 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     @Transactional
-    public Optional<Sale> createSale(SaleRequest saleRequest) {
+    public Sale createSale(SaleRequest saleRequest) {
         Sale sale = saleMapper.toEntity(saleRequest);
         sale.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(saleRepository.save(sale));
+        return saleRepository.save(sale);
     }
 
     @Override
     @Transactional
-    public Optional<Sale> updateSale(Long id, SaleRequest saleRequest) {
+    public Sale updateSale(Long id, SaleUpdateRequest saleRequest) {
         Sale sale = findSale(id);
         saleMapper.updateSale(saleRequest, sale);
-        return Optional.of(saleRepository.save(sale));
+        return saleRepository.save(sale);
     }
 
     @Override
@@ -61,27 +62,10 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    @Transactional
-    public Optional<Sale> activateSale(Long id) {
-        Sale sale = findSale(id);
-        sale.setDeleted(false);
-        sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(saleRepository.save(sale));
-    }
-
-    @Override
     public void deleteById(Long id) {
         saleRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Sale deactivate(Long id) {
-        Sale sale = findSale(id);
-        sale.setDeleted(true);
-        sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return saleRepository.save(sale);
-    }
 
     private Sale findSale(Long id) {
         return saleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Sale could not be found"));

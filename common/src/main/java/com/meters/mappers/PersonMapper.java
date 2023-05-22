@@ -1,7 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.requests.PersonRequest;
+import com.meters.requests.create.PersonRequest;
 import com.meters.entities.Person;
+import com.meters.requests.update.PersonUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class PersonMapper {
         return person;
     }
 
-    public Person updatePerson(PersonRequest personRequest, Person person) {
+    public Person updatePerson(PersonUpdateRequest personRequest, Person person) {
         if(personRequest.getPersonName() != null) {
             person.setPersonName(personRequest.getPersonName());
         }
@@ -39,6 +40,10 @@ public class PersonMapper {
 
         if(personRequest.getPassportNum() != null) {
             person.setPassportNum(personRequest.getPassportNum());
+        }
+
+        if (personRequest.getIsDeleted() != null){
+            person.setDeleted(personRequest.getIsDeleted());
         }
         person.setPersonFullName(person.getPersonName() + " " + person.getSurname());
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));

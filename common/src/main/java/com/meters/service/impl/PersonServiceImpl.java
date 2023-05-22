@@ -1,11 +1,12 @@
 package com.meters.service.impl;
 
-import com.meters.requests.PersonRequest;
+import com.meters.requests.create.PersonRequest;
 import com.meters.entities.Person;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.PersonMapper;
 import com.meters.repository.PersonRepository;
+import com.meters.requests.update.PersonUpdateRequest;
 import com.meters.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,19 +29,19 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public Optional<Person> createPerson(PersonRequest personRequest) {
+    public Person createPerson(PersonRequest personRequest) {
         Person person = personMapper.toEntity(personRequest);
         person.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(personRepository.save(person));
+        return personRepository.save(person);
     }
 
     @Override
     @Transactional
-    public Optional<Person> updatePerson(Long id, PersonRequest personRequest) {
+    public Person updatePerson(Long id, PersonUpdateRequest personRequest) {
         Person person = findPerson(id);
         personMapper.updatePerson(personRequest, person);
-        return Optional.of(personRepository.save(person));
+        return personRepository.save(person);
     }
 
     @Override
@@ -63,27 +64,11 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    @Transactional
-    public Optional<Person> activatePerson(Long id) {
-        Person person = findPerson(id);
-        person.setDeleted(false);
-        person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(personRepository.save(person));
-    }
-
-    @Override
     public void deleteById(Long id) {
         personRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Person deactivate(Long id) {
-        Person person = findPerson(id);
-        person.setDeleted(true);
-        person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return personRepository.save(person);
-    }
+
 
     private Person findPerson(Long id) {
         return personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Person could not be found"));

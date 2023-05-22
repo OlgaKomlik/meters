@@ -21,6 +21,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -46,11 +47,13 @@ public class Person {
     @NotNull
     @Column(name = "surname", nullable = false, length = 30)
     private String surname;
+
     @Size(max = 100)
     @NotNull
     @Column(name = "person_full_name", nullable = false, length = 100)
     private String personFullName;
 
+    @NotNull
     @Column(name = "birth_date", nullable = false)
     private Timestamp birthDate;
 
@@ -65,10 +68,10 @@ public class Person {
     private String passportNum;
 
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

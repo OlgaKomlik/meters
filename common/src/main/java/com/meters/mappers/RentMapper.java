@@ -1,9 +1,10 @@
 package com.meters.mappers;
 
-import com.meters.requests.RentRequest;
+import com.meters.requests.create.RentRequest;
 import com.meters.entities.Rent;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.RealEstateRepository;
+import com.meters.requests.update.RentUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -25,12 +26,15 @@ public class RentMapper {
         return rent;
     }
 
-    public Rent updateRent(RentRequest rentRequest, Rent rent) {
+    public Rent updateRent(RentUpdateRequest rentRequest, Rent rent) {
         if(rentRequest.getRentPerMonth() != null) {
             rent.setRentPerMonth(rentRequest.getRentPerMonth());
         }
         if(rentRequest.getMinPeriod() != null) {
             rent.setMinPeriod(rentRequest.getMinPeriod());
+        }
+        if (rentRequest.getIsDeleted() != null){
+            rent.setDeleted(rentRequest.getIsDeleted());
         }
         setRealEstate(rentRequest,rent);
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));

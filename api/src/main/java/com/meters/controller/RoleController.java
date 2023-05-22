@@ -1,12 +1,15 @@
 package com.meters.controller;
 
-import com.meters.requests.RoleRequest;
+import com.meters.requests.create.RoleRequest;
 import com.meters.entities.Role;
+import com.meters.requests.update.RoleUpdateRequest;
 import com.meters.service.RoleService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -26,33 +30,47 @@ public class RoleController {
     private final RoleService roleService;
 
     @GetMapping
-    public ResponseEntity<Object> getAllRoles() {
+    public ResponseEntity<List<Role>> getAllRoles() {
         List<Role> roles = roleService.findAll();
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Role>> getRoleById(@PathVariable Long id) {
-        return ResponseEntity.ok(roleService.findById(id));
+    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
+        Optional<Role> role = roleService.findById(id);
+        if(role.isPresent()) {
+            return new ResponseEntity<> (role.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<Role>> createRole(@Valid @RequestBody RoleRequest roleRequest) {
-        Optional<Role> role = roleService.createRole(roleRequest);
-        return new ResponseEntity<>(role, HttpStatus.CREATED);
-    }
+    @PostMapping
+    public ResponseEntity<Role> createRole(@Valid @RequestBody RoleRequest roleRequest,
+                                           BindingResult bindingResult) {
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Optional<Role>> updateRole(@Valid @RequestBody RoleRequest roleRequest, @PathVariable("id") Long id) {
-        Optional<Role> role = roleService.updateRole(id, roleRequest);
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Role role = roleService.createRole(roleRequest);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivateRole(@PathVariable("id") Long id) {
-        roleService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Role> updateRole(@Valid @RequestBody RoleUpdateRequest roleRequest,
+                                           @PathVariable("id") Long id, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Role role = roleService.updateRole(id, roleRequest);
+        return new ResponseEntity<>(role, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRole(@PathVariable("id") Long id) {
@@ -60,9 +78,4 @@ public class RoleController {
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Role>> activateRole(@PathVariable("id") Long id) {
-        Optional<Role> role = roleService.activateRole(id);
-        return new ResponseEntity<>(role, HttpStatus.OK);
-    }
 }

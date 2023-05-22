@@ -24,6 +24,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -44,15 +45,16 @@ public class Rent {
     @NotNull
     @Column(name = "rent_per_month", nullable = false)
     private BigDecimal rentPerMonth;
+
     @NotNull
     @Column(name = "min_period", nullable = false)
     private Integer minPeriod;
 
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

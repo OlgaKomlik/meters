@@ -1,11 +1,12 @@
 package com.meters.service.impl;
 
-import com.meters.requests.RentRequest;
+import com.meters.requests.create.RentRequest;
 import com.meters.entities.Rent;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.RentMapper;
 import com.meters.repository.RentRepository;
+import com.meters.requests.update.RentUpdateRequest;
 import com.meters.service.RentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,19 +27,19 @@ public class RentServiceImpl implements RentService {
 
     @Override
     @Transactional
-    public Optional<Rent> createRent(RentRequest rentRequest) {
+    public Rent createRent(RentRequest rentRequest) {
         Rent rent = rentMapper.toEntity(rentRequest);
         rent.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(rentRepository.save(rent));
+        return rentRepository.save(rent);
     }
 
     @Override
     @Transactional
-    public Optional<Rent> updateRent(Long id, RentRequest rentRequest) {
+    public Rent updateRent(Long id, RentUpdateRequest rentRequest) {
         Rent rent = findRent(id);
         rentMapper.updateRent(rentRequest, rent);
-        return Optional.of(rentRepository.save(rent));
+        return rentRepository.save(rent);
     }
 
     @Override
@@ -60,28 +61,13 @@ public class RentServiceImpl implements RentService {
         return Optional.of(rent);
     }
 
-    @Override
-    @Transactional
-    public Optional<Rent> activateRent(Long id) {
-        Rent rent = findRent(id);
-        rent.setDeleted(false);
-        rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(rentRepository.save(rent));
-    }
 
     @Override
     public void deleteById(Long id) {
         rentRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Rent deactivate(Long id) {
-        Rent rent = findRent(id);
-        rent.setDeleted(true);
-        rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return rentRepository.save(rent);
-    }
+
 
     private Rent findRent(Long id) {
         return rentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rent could not be found"));

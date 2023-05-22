@@ -1,6 +1,6 @@
 package com.meters.service.catalogs.impl;
 
-import com.meters.requests.catalogs.ObjectTypeRequest;
+import com.meters.requests.create.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,19 +23,17 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
 
     @Override
     @Transactional
-    public Optional<ObjectType> createObjectType(ObjectTypeRequest objectTypeRequest) {
+    public ObjectType createObjectType(ObjectTypeRequest objectTypeRequest) {
         ObjectType objectType = objectTypeMapper.toEntity(objectTypeRequest);
-        objectType.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(objectTypeRepository.save(objectType));
+        return objectTypeRepository.save(objectType);
     }
 
     @Override
     @Transactional
-    public Optional<ObjectType> updateObjectType(Long id, ObjectTypeRequest objectTypeRequest) {
+    public ObjectType updateObjectType(Long id, ObjectTypeRequest objectTypeRequest) {
         ObjectType objectType = findObjectType(id);
         objectTypeMapper.updateObjectType(objectTypeRequest, objectType);
-        return Optional.of(objectTypeRepository.save(objectType));
+        return objectTypeRepository.save(objectType);
     }
 
     @Override
@@ -55,27 +51,10 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     }
 
     @Override
-    @Transactional
-    public Optional<ObjectType> activateObjectType(Long id) {
-        ObjectType objectType = findObjectType(id);
-        objectType.setDeleted(false);
-        objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(objectTypeRepository.save(objectType));
-    }
-
-    @Override
     public void deleteById(Long id) {
         objectTypeRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public ObjectType deactivate(Long id) {
-        ObjectType objectType = findObjectType(id);
-        objectType.setDeleted(true);
-        objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return objectTypeRepository.save(objectType);
-    }
 
     private ObjectType findObjectType(Long id) {
         return objectTypeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ObjectType could not be found"));

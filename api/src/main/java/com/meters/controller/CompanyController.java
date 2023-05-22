@@ -1,9 +1,11 @@
 package com.meters.controller;
 
-import com.meters.requests.CompanyRequest;
+import com.meters.requests.create.CompanyRequest;
 import com.meters.entities.Company;
+import com.meters.requests.update.CompanyUpdateRequest;
 import com.meters.service.CompanyService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -32,17 +36,17 @@ import java.util.Optional;
 public class CompanyController {
     private final CompanyService companyService;
 
-    @Value("${company.page-capacity}")
+    @Value("${page-capacity.company}")
     private Integer pageCapacity;
 
     @GetMapping
-    public ResponseEntity<Object> getAllCompanies() {
+    public ResponseEntity<List<Company>> getAllCompanies() {
         List<Company> companies = companyService.findAll();
         return new ResponseEntity<>(companies, HttpStatus.OK);
     }
 
     @GetMapping("/page/{page}")
-    public ResponseEntity<Object> getAllCompaniesWithPageAndSort(@PathVariable int page) {
+    public ResponseEntity<Page<Company>> getAllCompaniesWithPageAndSort(@PathVariable int page) {
 
         Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
@@ -56,27 +60,42 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Company>> getCompanyById(@PathVariable Long id) {
-        return ResponseEntity.ok(companyService.findById(id));
+    public ResponseEntity<Company> getCompanyById(@PathVariable Long id) {
+
+        Optional<Company> company = companyService.findById(id);
+        if(company.isPresent()) {
+            return new ResponseEntity<> (company.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<Company>> createCompany(@Valid @RequestBody CompanyRequest companyRequest) {
-        Optional<Company> company = companyService.createCompany(companyRequest);
+    @PostMapping
+    public ResponseEntity<Company> createCompany(@Valid @RequestBody CompanyRequest companyRequest,
+                                                 BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Company company = companyService.createCompany(companyRequest);
         return new ResponseEntity<>(company, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<Company>> updateCompany(@Valid @RequestBody CompanyRequest companyRequest, @PathVariable("id") Long id) {
-        Optional<Company> company = companyService.updateCompany(id, companyRequest);
+    public ResponseEntity<Company> updateCompany(@Valid @RequestBody CompanyUpdateRequest companyRequest,
+                                                 @PathVariable("id") Long id, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Company company = companyService.updateCompany(id, companyRequest);
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivateCompany(@PathVariable("id") Long id) {
-        companyService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCompany(@PathVariable("id") Long id) {
@@ -84,19 +103,21 @@ public class CompanyController {
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Company>> activateCompany(@PathVariable("id") Long id) {
-        Optional<Company> company = companyService.activateCompany(id);
-        return new ResponseEntity<>(company, HttpStatus.OK);
+    @GetMapping("/search/unp")
+    public ResponseEntity<Company> getCompanyByUnp(@RequestParam String unp) {
+
+        Optional<Company> company = companyService.findCompanyByUnpNum(unp);
+        if(company.isPresent()) {
+            return new ResponseEntity<> (company.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
-    @GetMapping("/unp/{unp}")
-    public ResponseEntity<Optional<Company>> getCompanyByUnp(@PathVariable String unp) {
-        return ResponseEntity.ok(companyService.findCompanyByUnpNum(unp));
-    }
-
-    @GetMapping("/name")
+    @GetMapping("/search/name")
     public ResponseEntity<List<Company>> getCompaniesByName(@RequestParam String query) {
-        return ResponseEntity.ok(companyService.findCompaniesByCompanyNameIsContainingIgnoreCase(query));
+        List<Company> companies = companyService.findCompaniesByCompanyNameIsContainingIgnoreCase(query);
+        return ResponseEntity.ok(companies);
     }
 }

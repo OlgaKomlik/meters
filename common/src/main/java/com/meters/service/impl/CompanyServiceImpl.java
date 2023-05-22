@@ -1,11 +1,12 @@
 package com.meters.service.impl;
 
-import com.meters.requests.CompanyRequest;
+import com.meters.requests.create.CompanyRequest;
 import com.meters.entities.Company;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.CompanyMapper;
 import com.meters.repository.CompanyRepository;
+import com.meters.requests.update.CompanyUpdateRequest;
 import com.meters.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,19 +27,19 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public Optional<Company> createCompany(CompanyRequest companyRequest) {
+    public Company createCompany(CompanyRequest companyRequest) {
         Company company = companyMapper.toEntity(companyRequest);
         company.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(companyRepository.save(company));
+        return companyRepository.save(company);
     }
 
     @Override
     @Transactional
-    public Optional<Company> updateCompany(Long id, CompanyRequest companyRequest) {
+    public Company updateCompany(Long id, CompanyUpdateRequest companyRequest) {
         Company company = findCompany(id);
         companyMapper.updateCompany(companyRequest, company);
-        return Optional.of(companyRepository.save(company));
+        return companyRepository.save(company);
     }
 
     @Override
@@ -60,28 +61,12 @@ public class CompanyServiceImpl implements CompanyService {
         return Optional.of(company);
     }
 
-    @Override
-    @Transactional
-    public Optional<Company> activateCompany(Long id) {
-        Company company = findCompany(id);
-        company.setDeleted(false);
-        company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(companyRepository.save(company));
-    }
 
     @Override
     public void deleteById(Long id) {
         companyRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Company deactivate(Long id) {
-        Company company = findCompany(id);
-        company.setDeleted(true);
-        company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return companyRepository.save(company);
-    }
 
     private Company findCompany(Long id) {
         return companyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Company could not be found"));

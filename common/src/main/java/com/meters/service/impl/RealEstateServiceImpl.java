@@ -1,11 +1,13 @@
 package com.meters.service.impl;
 
-import com.meters.requests.RealEstateRequest;
+import com.meters.repository.catalogs.ObjectTypeRepository;
+import com.meters.requests.create.RealEstateRequest;
 import com.meters.entities.RealEstate;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.RealEstateMapper;
 import com.meters.repository.RealEstateRepository;
+import com.meters.requests.update.RealEstateUpdateRequest;
 import com.meters.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,23 +25,26 @@ import java.util.Optional;
 public class RealEstateServiceImpl implements RealEstateService {
 
     private final RealEstateRepository realEstateRepository;
+
     private final RealEstateMapper realEstateMapper;
+
+    private final ObjectTypeRepository objectTypeRepository;
 
     @Override
     @Transactional
-    public Optional<RealEstate> createRealEstate(RealEstateRequest realEstateRequest) {
+    public RealEstate createRealEstate(RealEstateRequest realEstateRequest) {
         RealEstate realEstate = realEstateMapper.toEntity(realEstateRequest);
         realEstate.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(realEstateRepository.save(realEstate));
+        return realEstateRepository.save(realEstate);
     }
 
     @Override
     @Transactional
-    public Optional<RealEstate> updateRealEstate(Long id, RealEstateRequest realEstateRequest) {
+    public RealEstate updateRealEstate(Long id, RealEstateUpdateRequest realEstateRequest) {
         RealEstate realEstate = findRealEstate(id);
         realEstateMapper.updateRealEstate(realEstateRequest, realEstate);
-        return Optional.of(realEstateRepository.save(realEstate));
+        return realEstateRepository.save(realEstate);
     }
 
     @Override
@@ -62,27 +67,10 @@ public class RealEstateServiceImpl implements RealEstateService {
     }
 
     @Override
-    @Transactional
-    public Optional<RealEstate> activateRealEstate(Long id) {
-        RealEstate realEstate = findRealEstate(id);
-        realEstate.setDeleted(false);
-        realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(realEstateRepository.save(realEstate));
-    }
-
-    @Override
     public void deleteById(Long id) {
         realEstateRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public RealEstate deactivate(Long id) {
-        RealEstate realEstate = findRealEstate(id);
-        realEstate.setDeleted(true);
-        realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return realEstateRepository.save(realEstate);
-    }
 
     private RealEstate findRealEstate(Long id) {
         return realEstateRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("RealEstate could not be found"));

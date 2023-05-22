@@ -1,9 +1,11 @@
 package com.meters.controller;
 
-import com.meters.requests.RealEstateRequest;
+import com.meters.requests.create.RealEstateRequest;
 import com.meters.entities.RealEstate;
+import com.meters.requests.update.RealEstateUpdateRequest;
 import com.meters.service.RealEstateService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -30,17 +34,17 @@ import java.util.Optional;
 public class RealEstateController {
     private final RealEstateService realEstateService;
 
-    @Value("${real-estate.page-capacity}")
+    @Value("${page-capacity.real-estate}")
     private Integer pageCapacity;
 
     @GetMapping
-    public ResponseEntity<Object> getAllRealEstates() {
+    public ResponseEntity<List<RealEstate>> getAllRealEstates() {
         List<RealEstate> realEstates = realEstateService.findAll();
         return new ResponseEntity<>(realEstates, HttpStatus.OK);
     }
 
     @GetMapping("/page/{page}")
-    public ResponseEntity<Object> getAllRealEstatesWithPageAndSort(@PathVariable int page) {
+    public ResponseEntity<Page<RealEstate>> getAllRealEstatesWithPageAndSort(@PathVariable int page) {
 
         Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
@@ -54,26 +58,39 @@ public class RealEstateController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<RealEstate>> getRealEstateById(@PathVariable Long id) {
-        return ResponseEntity.ok(realEstateService.findById(id));
+    public ResponseEntity<RealEstate> getRealEstateById(@PathVariable Long id) {
+        Optional<RealEstate> realEstate = realEstateService.findById(id);
+        if(realEstate.isPresent()) {
+            return new ResponseEntity<> (realEstate.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<RealEstate>> createRealEstate(@Valid @RequestBody RealEstateRequest realEstateRequest) {
-        Optional<RealEstate> realEstate = realEstateService.createRealEstate(realEstateRequest);
+    @PostMapping
+    public ResponseEntity<RealEstate> createRealEstate(@Valid @RequestBody RealEstateRequest realEstateRequest,
+                                                       BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        RealEstate realEstate = realEstateService.createRealEstate(realEstateRequest);
         return new ResponseEntity<>(realEstate, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<RealEstate>> updateRealEstate(@Valid @RequestBody RealEstateRequest realEstateRequest, @PathVariable("id") Long id) {
-        Optional<RealEstate> realEstate = realEstateService.updateRealEstate(id, realEstateRequest);
-        return new ResponseEntity<>(realEstate, HttpStatus.OK);
-    }
+    public ResponseEntity<RealEstate> updateRealEstate(@Valid @RequestBody RealEstateUpdateRequest realEstateRequest,
+                                                       @PathVariable("id") Long id, BindingResult bindingResult) {
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivateRealEstate(@PathVariable("id") Long id) {
-        realEstateService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        RealEstate realEstate = realEstateService.updateRealEstate(id, realEstateRequest);
+        return new ResponseEntity<>(realEstate, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -82,9 +99,4 @@ public class RealEstateController {
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<RealEstate>> activateRealEstate(@PathVariable("id") Long id) {
-        Optional<RealEstate> realEstate = realEstateService.activateRealEstate(id);
-        return new ResponseEntity<>(realEstate, HttpStatus.OK);
-    }
 }

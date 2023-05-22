@@ -24,6 +24,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +47,12 @@ public class Role {
     @NotNull
     @Column(name = "role_name", nullable = false, length = 50)
     private String roleName;
-    @Column(nullable = false)
-    private Timestamp created;
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
+
+    @Column(nullable = false)
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

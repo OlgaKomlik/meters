@@ -1,7 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.requests.RoleRequest;
+import com.meters.requests.create.RoleRequest;
 import com.meters.entities.Role;
+import com.meters.requests.update.RoleUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,13 @@ public class RoleMapper {
         return modelMapper.map(roleRequest, Role.class);
     }
 
-    public Role updateRole(RoleRequest roleRequest, Role role) {
+    public Role updateRole(RoleUpdateRequest roleRequest, Role role) {
         if(roleRequest.getRoleName() != null) {
             role.setRoleName(roleRequest.getRoleName());
+        }
+
+        if (roleRequest.getIsDeleted() != null){
+            role.setDeleted(roleRequest.getIsDeleted());
         }
         role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

@@ -1,9 +1,11 @@
 package com.meters.controller;
 
-import com.meters.requests.PersonRequest;
+import com.meters.requests.create.PersonRequest;
 import com.meters.entities.Person;
+import com.meters.requests.update.PersonUpdateRequest;
 import com.meters.service.PersonService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -32,17 +36,17 @@ public class PersonController {
 
     private final PersonService personService;
 
-    @Value("${person.page-capacity}")
+    @Value("${page-capacity.person}")
     private Integer pageCapacity;
 
     @GetMapping
-    public ResponseEntity<Object> getAllPersons() {
+    public ResponseEntity<List<Person>> getAllPersons() {
         List<Person> persons = personService.findAll();
         return new ResponseEntity<>(persons, HttpStatus.OK);
     }
 
     @GetMapping("/page/{page}")
-    public ResponseEntity<Object> getAllPersonsWithPageAndSort(@PathVariable int page) {
+    public ResponseEntity<Page<Person>> getAllPersonsWithPageAndSort(@PathVariable int page) {
 
         Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
@@ -56,26 +60,39 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Person>> getPersonById(@PathVariable Long id) {
-        return ResponseEntity.ok(personService.findById(id));
+    public ResponseEntity<Person> getPersonById(@PathVariable Long id) {
+        Optional<Person> person = personService.findById(id);
+        if(person.isPresent()) {
+            return new ResponseEntity<> (person.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<Person>> createPerson(@Valid @RequestBody PersonRequest personRequest) {
-        Optional<Person> person = personService.createPerson(personRequest);
+    @PostMapping
+    public ResponseEntity<Person> createPerson(@Valid @RequestBody PersonRequest personRequest,
+                                               BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Person person = personService.createPerson(personRequest);
         return new ResponseEntity<>(person, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<Person>> updatePerson(@Valid @RequestBody PersonRequest personRequest, @PathVariable("id") Long id) {
-        Optional<Person> person = personService.updatePerson(id, personRequest);
-        return new ResponseEntity<>(person, HttpStatus.OK);
-    }
+    public ResponseEntity<Person> updatePerson(@Valid @RequestBody PersonUpdateRequest personRequest, @PathVariable("id") Long id,
+                                               BindingResult bindingResult) {
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivatePerson(@PathVariable("id") Long id) {
-        personService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Person person = personService.updatePerson(id, personRequest);
+        return new ResponseEntity<>(person, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -84,19 +101,20 @@ public class PersonController {
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Person>> activatePerson(@PathVariable("id") Long id) {
-        Optional<Person> person = personService.activatePerson(id);
-        return new ResponseEntity<>(person, HttpStatus.OK);
+    @GetMapping("/search/passport")
+    public ResponseEntity<Person> getPersonByPassportNum(@RequestParam String passNum) {
+
+        Optional<Person> person = personService.findByPassportNum(passNum);
+        if(person.isPresent()) {
+            return new ResponseEntity<> (person.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/pass_num")
-    public ResponseEntity<Optional<Person>> getPersonByPassportNum(@RequestParam String passNum) {
-        return new ResponseEntity<>(personService.findByPassportNum(passNum), HttpStatus.OK);
-    }
-
-    @GetMapping("/full_name")
+    @GetMapping("/search/fullname")
     public ResponseEntity<List<Person>> getPersonByFullName(@RequestParam String query) {
-        return new ResponseEntity<>(personService.findByPersonFullNameContainingIgnoreCase(query), HttpStatus.OK);
+        List<Person> persons = personService.findByPersonFullNameContainingIgnoreCase(query);
+        return new ResponseEntity<>(persons, HttpStatus.OK);
     }
 }

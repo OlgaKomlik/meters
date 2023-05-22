@@ -1,13 +1,15 @@
 package com.meters.controller.catalogs;
 
 
-import com.meters.requests.catalogs.DealTypeRequest;
+import com.meters.requests.create.catalogs.DealTypeRequest;
 import com.meters.entities.catalogs.DealType;
 import com.meters.service.catalogs.DealTypeService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -28,32 +31,43 @@ public class DealTypeController {
     private final DealTypeService dealTypeService;
 
     @GetMapping
-    public ResponseEntity<Object> getAllDealTypes() {
+    public ResponseEntity<List<DealType>> getAllDealTypes() {
         List<DealType> dealTypes = dealTypeService.findAll();
         return new ResponseEntity<>(dealTypes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<DealType>> getDealTypeById(@PathVariable Long id) {
-        return ResponseEntity.ok(dealTypeService.findById(id));
+    public ResponseEntity<DealType> getDealTypeById(@PathVariable Long id) {
+        Optional<DealType> dealType = dealTypeService.findById(id);
+        if(dealType.isPresent()) {
+            return new ResponseEntity<> (dealType.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<DealType>> createDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest) {
-        Optional<DealType> dealType = dealTypeService.createDealType(dealTypeRequest);
+    @PostMapping
+    public ResponseEntity<DealType> createDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        DealType dealType = dealTypeService.createDealType(dealTypeRequest);
         return new ResponseEntity<>(dealType, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<DealType>> updateDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest, @PathVariable("id") Long id) {
-        Optional<DealType> dealType = dealTypeService.updateDealType(id, dealTypeRequest);
-        return new ResponseEntity<>(dealType, HttpStatus.OK);
-    }
+    public ResponseEntity<DealType> updateDealType(@Valid @RequestBody DealTypeRequest dealTypeRequest, @PathVariable("id") Long id, BindingResult bindingResult) {
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivateDealType(@PathVariable("id") Long id) {
-        dealTypeService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        DealType dealType = dealTypeService.updateDealType(id, dealTypeRequest);
+        return new ResponseEntity<>(dealType, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -62,9 +76,4 @@ public class DealTypeController {
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<DealType>> activateDealType(@PathVariable("id") Long id) {
-        Optional<DealType> dealType = dealTypeService.activateDealType(id);
-        return new ResponseEntity<>(dealType, HttpStatus.OK);
-    }
 }
