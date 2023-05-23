@@ -1,0 +1,12 @@
+alter sequence public.managers_id_seq start 117 increment 1 restart 117;
+alter sequence public.persons_id_seq start 206 increment 1 restart 206;
+alter sequence public.companies_id_seq start 57 increment 1 restart 57;
+alter sequence public.real_estates_id_seq start 266 increment 1 restart 266;
+alter sequence public.rents_id_seq start 207 increment 1 restart 207;
+alter sequence public.sales_id_seq start 231 increment 1 restart 231;
+alter sequence public.deals_id_seq start 350 increment 1 restart 350;
+alter sequence public.roles_role_id_seq start 5 increment 1 restart 5;
+alter sequence public.l_managers_roles_id_seq start 58 increment 1 restart 58;
+alter sequence public.locations_location_id_seq start 42 increment 1 restart 42;
+alter sequence public.object_type_object_type_id_seq start 5 increment 1 restart 5;
+alter sequence public.c_deal_type_deal_type_id_seq start 4 increment 1 restart 4;
