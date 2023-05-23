@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.create.CompanyRequest;
 import com.meters.entities.Company;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.CompanyMapper;
 import com.meters.repository.CompanyRepository;
+import com.meters.requests.create.CompanyRequest;
 import com.meters.requests.update.CompanyUpdateRequest;
 import com.meters.service.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +27,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public Company createCompany(CompanyRequest companyRequest) {
         Company company = companyMapper.toEntity(companyRequest);
-        company.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        company.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return companyRepository.save(company);
     }
 
@@ -55,7 +51,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Optional<Company> findById(Long id) {
         Company company = findCompany(id);
-        if(company.isDeleted()) {
+        if (company.isDeleted()) {
             throw new EntityIsDeletedException("Company is deleted");
         }
         return Optional.of(company);

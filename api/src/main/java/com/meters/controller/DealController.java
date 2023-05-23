@@ -1,11 +1,12 @@
 package com.meters.controller;
 
-import com.meters.requests.create.DealRequest;
 import com.meters.entities.Deal;
+import com.meters.exceptoins.ValidationException;
+import com.meters.requests.create.DealRequest;
 import com.meters.requests.update.DealUpdateRequest;
 import com.meters.service.DealService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +30,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/rest/deals")
+@Tag(name = "DealController", description = "Deal management methods")
 @RequiredArgsConstructor
 public class DealController {
 
@@ -58,12 +59,13 @@ public class DealController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Deal> getDealById(@PathVariable Long id) {
 
         Optional<Deal> deal = dealService.findById(id);
-        if(deal.isPresent()) {
-            return new ResponseEntity<> (deal.get(), HttpStatus.OK);
+        if (deal.isPresent()) {
+            return new ResponseEntity<>(deal.get(), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -83,7 +85,7 @@ public class DealController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Deal> updateDeal(@Valid @RequestBody DealUpdateRequest dealRequest, @PathVariable("id") Long id ,
+    public ResponseEntity<Deal> updateDeal(@Valid @RequestBody DealUpdateRequest dealRequest, @PathVariable("id") Long id,
                                            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -95,10 +97,4 @@ public class DealController {
         return new ResponseEntity<>(deal, HttpStatus.OK);
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDeal(@PathVariable("id") Long id) {
-        dealService.deleteById(id);
-        return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
-    }
 }

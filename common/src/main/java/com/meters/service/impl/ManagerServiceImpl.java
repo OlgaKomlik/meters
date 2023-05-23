@@ -1,25 +1,25 @@
 package com.meters.service.impl;
 
-import com.meters.requests.create.ManagerRequest;
 import com.meters.entities.Manager;
 import com.meters.entities.Role;
-import com.meters.mappers.ManagerMapper;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
+import com.meters.mappers.ManagerMapper;
 import com.meters.repository.ManagerRepository;
 import com.meters.repository.RoleRepository;
+import com.meters.requests.create.ManagerRequest;
 import com.meters.requests.update.ManagerUpdateRequest;
 import com.meters.service.ManagerService;
-
 import com.meters.service.email.EmailSenderService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +29,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class ManagerServiceImpl implements ManagerService {
+
+    private static final Logger logger = Logger.getLogger(ManagerServiceImpl.class);
 
     private static final String DEFAULT_ROLE = "ROLE_USER";
 
@@ -63,8 +65,6 @@ public class ManagerServiceImpl implements ManagerService {
     @Transactional
     public Manager createManager(ManagerRequest managerRequest) {
         Manager manager = managerMapper.toEntity(managerRequest);
-        manager.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         Role role = roleRepository.findByRoleName(DEFAULT_ROLE).orElseThrow(() -> new EntityNotFoundException("Role not exist"));
         manager.getRoles().add(role);
         return managerRepository.save(manager);
@@ -100,7 +100,7 @@ public class ManagerServiceImpl implements ManagerService {
     public List<Manager> findBirthDayManagers(LocalDateTime localDateTime) {
         Integer day = localDateTime.getDayOfMonth();
         Integer month = localDateTime.getMonthValue();
-    return managerRepository.findBirthDayManagers(day, month);
+        return managerRepository.findBirthDayManagers(day, month);
     }
 
     @Override
@@ -123,7 +123,11 @@ public class ManagerServiceImpl implements ManagerService {
         for (Manager manager : managers) {
             String message = "Happy birthday dear " + manager.getFullName() + "! Meters Company wishes you prosperity, success in your work and the fulfillment of all your desires.\n" +
                     "Best regards, Meters team";
-            emailSenderService.sendEmail(manager.getAuthenticationInfo().getEmail(), subject, message);
+            try {
+                emailSenderService.sendEmail(manager.getAuthenticationInfo().getEmail(), subject, message);
+            } catch (MailException exception) {
+                logger.error("Message not sending");
+            }
         }
     }
 

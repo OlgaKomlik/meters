@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.create.PersonRequest;
 import com.meters.entities.Person;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.PersonMapper;
 import com.meters.repository.PersonRepository;
+import com.meters.requests.create.PersonRequest;
 import com.meters.requests.update.PersonUpdateRequest;
 import com.meters.service.PersonService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +29,6 @@ public class PersonServiceImpl implements PersonService {
     @Transactional
     public Person createPerson(PersonRequest personRequest) {
         Person person = personMapper.toEntity(personRequest);
-        person.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return personRepository.save(person);
     }
 
@@ -57,7 +53,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> findById(Long id) {
         Person person = findPerson(id);
-        if(person.isDeleted()) {
+        if (person.isDeleted()) {
             throw new EntityIsDeletedException("Person is deleted");
         }
         return Optional.of(person);
@@ -67,7 +63,6 @@ public class PersonServiceImpl implements PersonService {
     public void deleteById(Long id) {
         personRepository.deleteById(id);
     }
-
 
 
     private Person findPerson(Long id) {

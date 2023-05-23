@@ -100,16 +100,16 @@ create index managers_surname_index
 
 create table if not exists public.locations
 (
-    location_id bigserial
+    location_id bigint default nextval('locations_location_id_seq') not null
         primary key
         unique,
-    city        varchar(50)  not null,
-    district    varchar(50)  not null,
-    region      varchar(100) not null,
-    created     timestamp(6) not null,
-    changed     timestamp(6) not null,
-    is_deleted  boolean      not null,
-    country     varchar(50)  not null
+    city        varchar(50)                                         not null,
+    district    varchar(50)                                         not null,
+    region      varchar(100)                                        not null,
+    created     timestamp(6)                                        not null,
+    changed     timestamp(6)                                        not null,
+    is_deleted  boolean                                             not null,
+    country     varchar(50)                                         not null
 );
 
 
@@ -340,16 +340,16 @@ create index c_deal_type_type_name_index
 
 create table if not exists public.l_managers_roles
 (
-    id          bigint default nextval('l_managers_roles_id_seq'::regclass) not null
+    id         bigint    default nextval('l_managers_roles_id_seq'::regclass) not null
         primary key
         unique,
-    manager_id bigint                  not null
+    manager_id bigint                                                         not null
         constraint l_managers_roles_managers_manager_id_fk
             references public.managers,
-    role_id    bigint                  not null
+    role_id    bigint                                                         not null
         constraint l_managers_roles_roles_role_id_fk
             references public.roles,
-    created    timestamp default now() not null
+    created    timestamp default now()                                        not null
 );
 
 alter table public.l_managers_roles

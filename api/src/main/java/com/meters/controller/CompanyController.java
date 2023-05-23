@@ -1,13 +1,13 @@
 package com.meters.controller;
 
-import com.meters.requests.create.CompanyRequest;
 import com.meters.entities.Company;
+import com.meters.exceptoins.ValidationException;
+import com.meters.requests.create.CompanyRequest;
 import com.meters.requests.update.CompanyUpdateRequest;
 import com.meters.service.CompanyService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +31,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/rest/companies")
+@Tag(name = "CompanyController", description = "Company management methods")
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyService companyService;
@@ -63,8 +63,8 @@ public class CompanyController {
     public ResponseEntity<Company> getCompanyById(@PathVariable Long id) {
 
         Optional<Company> company = companyService.findById(id);
-        if(company.isPresent()) {
-            return new ResponseEntity<> (company.get(), HttpStatus.OK);
+        if (company.isPresent()) {
+            return new ResponseEntity<>(company.get(), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -97,18 +97,12 @@ public class CompanyController {
     }
 
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCompany(@PathVariable("id") Long id) {
-        companyService.deleteById(id);
-        return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
-    }
-
     @GetMapping("/search/unp")
     public ResponseEntity<Company> getCompanyByUnp(@RequestParam String unp) {
 
         Optional<Company> company = companyService.findCompanyByUnpNum(unp);
-        if(company.isPresent()) {
-            return new ResponseEntity<> (company.get(), HttpStatus.OK);
+        if (company.isPresent()) {
+            return new ResponseEntity<>(company.get(), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -120,4 +114,6 @@ public class CompanyController {
         List<Company> companies = companyService.findCompaniesByCompanyNameIsContainingIgnoreCase(query);
         return ResponseEntity.ok(companies);
     }
+
+
 }

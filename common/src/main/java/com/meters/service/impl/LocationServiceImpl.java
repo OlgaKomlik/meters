@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.create.LocationRequest;
 import com.meters.entities.Location;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.LocationMapper;
 import com.meters.repository.LocationRepository;
+import com.meters.requests.create.LocationRequest;
 import com.meters.requests.update.LocationUpdateRequest;
 import com.meters.service.LocationService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +28,6 @@ public class LocationServiceImpl implements LocationService {
     @Transactional
     public Location createLocation(LocationRequest locationRequest) {
         Location location = locationMapper.toEntity(locationRequest);
-        location.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return locationRepository.save(location);
     }
 
@@ -56,7 +52,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Optional<Location> findById(Long id) {
         Location location = findLocation(id);
-        if(location.isDeleted()) {
+        if (location.isDeleted()) {
             throw new EntityIsDeletedException("Location is deleted");
         }
         return Optional.of(location);
@@ -67,7 +63,6 @@ public class LocationServiceImpl implements LocationService {
     public void deleteById(Long id) {
         locationRepository.deleteById(id);
     }
-
 
 
     private Location findLocation(Long id) {

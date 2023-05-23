@@ -1,21 +1,19 @@
 package com.meters.service.impl;
 
-import com.meters.requests.create.RoleRequest;
 import com.meters.entities.Role;
-import com.meters.mappers.RoleMapper;
-import com.meters.repository.RoleRepository;
-import com.meters.requests.update.RoleUpdateRequest;
-import com.meters.service.RoleService;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
+import com.meters.mappers.RoleMapper;
+import com.meters.repository.RoleRepository;
+import com.meters.requests.create.RoleRequest;
+import com.meters.requests.update.RoleUpdateRequest;
+import com.meters.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +28,6 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public Role createRole(RoleRequest roleRequest) {
         Role role = roleMapper.toEntity(roleRequest);
-        role.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return roleRepository.save(role);
     }
 
@@ -56,7 +52,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Optional<Role> findById(Long id) {
         Role role = findRole(id);
-        if(role.isDeleted()) {
+        if (role.isDeleted()) {
             throw new EntityIsDeletedException("Role is deleted");
         }
         return Optional.of(role);
@@ -66,7 +62,6 @@ public class RoleServiceImpl implements RoleService {
     public void deleteById(Long id) {
         roleRepository.deleteById(id);
     }
-
 
 
     private Role findRole(Long id) {

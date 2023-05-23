@@ -1,11 +1,12 @@
 package com.meters.controller;
 
-import com.meters.requests.create.RealEstateRequest;
 import com.meters.entities.RealEstate;
+import com.meters.exceptoins.ValidationException;
+import com.meters.requests.create.RealEstateRequest;
 import com.meters.requests.update.RealEstateUpdateRequest;
 import com.meters.service.RealEstateService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +29,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/rest/real-estates")
+@RequestMapping("/rest/estates")
+@Tag(name = "RealEstateController", description = "Real Estate management methods")
 @RequiredArgsConstructor
 public class RealEstateController {
+
     private final RealEstateService realEstateService;
 
     @Value("${page-capacity.real-estate}")
@@ -60,8 +62,8 @@ public class RealEstateController {
     @GetMapping("/{id}")
     public ResponseEntity<RealEstate> getRealEstateById(@PathVariable Long id) {
         Optional<RealEstate> realEstate = realEstateService.findById(id);
-        if(realEstate.isPresent()) {
-            return new ResponseEntity<> (realEstate.get(), HttpStatus.OK);
+        if (realEstate.isPresent()) {
+            return new ResponseEntity<>(realEstate.get(), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -93,10 +95,5 @@ public class RealEstateController {
         return new ResponseEntity<>(realEstate, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteRealEstate(@PathVariable("id") Long id) {
-        realEstateService.deleteById(id);
-        return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
-    }
 
 }
