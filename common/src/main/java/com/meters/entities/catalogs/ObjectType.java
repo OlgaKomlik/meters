@@ -23,6 +23,7 @@ import lombok.ToString;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -44,11 +45,12 @@ public class ObjectType {
     @NotNull
     @Column(name = "object_type_name", nullable = false, length = 30)
     private String typeName;
-    @Column(nullable = false)
-    private Timestamp created;
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
+
+    @Column(nullable = false)
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

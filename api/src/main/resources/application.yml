@@ -1,37 +1,35 @@
 spring:
-  main:
-    allow-circular-references: true
+  jpa:
+    show-sql: true
   datasource:
     hikari:
-      jdbc-url: "jdbc:postgresql://localhost:5432/agency?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+      jdbc-url: jdbc:postgresql://localhost:5432/agency
       maximum-pool-size: 20
       driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
-    url: "jdbc:postgresql://localhost:5432/agency?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+    url: jdbc:postgresql://localhost:5432/agency
     driver-class-name: org.postgresql.Driver
-
   flyway:
     enabled: true
     baseline-on-migrate: true
     baseline-description: Flyway Scripts
-    #    locations: classpath:/db
+    locations: classpath:/db/migration
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     url: ${spring.datasource.url}
     default-schema: public
-    out-of-order: true
     validate-on-migrate: false
-
-  jpa:
-    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: oluska92666@gmail.com
+    password: fxfdlwnstazitijg
     properties:
-      hibernate:
-        ddl-auto: validate
-        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
-        format_sql: true
-
-
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
 ---
 caffeine:
   initialCapacity: 30
@@ -40,27 +38,19 @@ caffeine:
 
 ---
 
-company:
-  page-capacity: 10
+page-capacity:
+  company: 10
+  deal: 4
+  location: 15
+  manager: 10
+  person: 10
+  real-estate: 8
+  rent: 15
+  sale: 15
 
-deal:
-  page-capacity: 4
 
-location:
-  page-capacity: 15
+---
 
-manager:
-  page-capacity: 10
 
-person:
-  page-capacity: 10
 
-real-estate:
-  page-capacity: 8
-
-rent:
-  page-capacity: 15
-
-sale:
-  page-capacity: 15
 

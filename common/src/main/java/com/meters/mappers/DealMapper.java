@@ -9,7 +9,8 @@ import com.meters.repository.PersonRepository;
 import com.meters.repository.RentRepository;
 import com.meters.repository.SaleRepository;
 import com.meters.repository.catalogs.DealTypeRepository;
-import com.meters.requests.DealRequest;
+import com.meters.requests.create.DealRequest;
+import com.meters.requests.update.DealUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class DealMapper {
     }
 
 
-    public Deal updateDeal(DealRequest dealRequest, Deal deal) {
+    public Deal updateDeal(DealUpdateRequest dealRequest, Deal deal) {
         if (dealRequest.getAmount() != null) {
             deal.setAmount(dealRequest.getAmount());
         }
@@ -75,6 +76,10 @@ public class DealMapper {
         }
         if (dealRequest.getBuyer() != null) {
             chooseBuyer(dealRequest, deal);
+        }
+
+        if (dealRequest.getIsDeleted() != null) {
+            deal.setDeleted(dealRequest.getIsDeleted());
         }
 
         deal.setChanged(Timestamp.valueOf(LocalDateTime.now()));

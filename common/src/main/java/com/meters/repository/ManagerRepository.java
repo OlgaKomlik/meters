@@ -17,9 +17,7 @@ public interface ManagerRepository extends JpaRepository<Manager, Long> {
     @Query("select m.id, AVG(d.fee) as averageFee from Deal d  JOIN d.manager m group by m.id ORDER BY averageFee desc")
     List<Object[]> getAverageFeeOfManagers();
 
-    @Query("select m from Manager m where m.id = best_seller_of_the_month( :month, :year)")
-    Manager getBestSellerOfTheMonth(int month, int year);
+    @Query("select m from Manager m JOIN m.deals d where EXTRACT(month from d.dealDate) = :month AND EXTRACT(year from d.dealDate) = :year order by d.fee desc")
+    List<Manager> getBestSellersOfTheMonth(int month, int year);
 
-/*   @Query("select m, sum(d.fee) as sumFee from Deal d JOIN d.manager m group by m.id having EXTRACT(month from d.dealDate) = :month AND EXTRACT(year from d.dealDate) = :year  And sumFee =bigest_fee_of_the_month(:month, :year)")
-   List<Object []> getBestSellersOfTheMonth(int month, int year);*/
 }

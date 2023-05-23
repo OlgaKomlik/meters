@@ -1,7 +1,8 @@
 package com.meters.service;
 
 import com.meters.entities.Role;
-import com.meters.requests.RoleRequest;
+import com.meters.requests.create.RoleRequest;
+import com.meters.requests.update.RoleUpdateRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoleService {
-    Optional<Role> createRole(RoleRequest roleRequest);
+    Role createRole(RoleRequest roleRequest);
 
-    Optional<Role> updateRole(Long id, RoleRequest roleRequest);
+    Role updateRole(Long id, RoleUpdateRequest roleRequest);
 
     @Cacheable("roles")
     List<Role> findAll();
@@ -21,9 +22,7 @@ public interface RoleService {
 
     Optional<Role> findById(Long id);
 
-    Optional<Role> activateRole(Long id);
 
     void deleteById(Long id);
 
-    Role deactivate(Long id);
 }

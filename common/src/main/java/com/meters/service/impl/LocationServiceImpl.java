@@ -5,7 +5,8 @@ import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.LocationMapper;
 import com.meters.repository.LocationRepository;
-import com.meters.requests.LocationRequest;
+import com.meters.requests.create.LocationRequest;
+import com.meters.requests.update.LocationUpdateRequest;
 import com.meters.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,19 +26,17 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional
-    public Optional<Location> createLocation(LocationRequest locationRequest) {
+    public Location createLocation(LocationRequest locationRequest) {
         Location location = locationMapper.toEntity(locationRequest);
-        location.setCreated(Timestamp.valueOf(LocalDateTime.now()));
-        location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(locationRepository.save(location));
+        return locationRepository.save(location);
     }
 
     @Override
     @Transactional
-    public Optional<Location> updateLocation(Long id, LocationRequest locationRequest) {
+    public Location updateLocation(Long id, LocationUpdateRequest locationRequest) {
         Location location = findLocation(id);
         locationMapper.updateLocation(locationRequest, location);
-        return Optional.of(locationRepository.save(location));
+        return locationRepository.save(location);
     }
 
     @Override
@@ -61,28 +58,12 @@ public class LocationServiceImpl implements LocationService {
         return Optional.of(location);
     }
 
-    @Override
-    @Transactional
-    public Optional<Location> activateLocation(Long id) {
-        Location location = findLocation(id);
-        location.setDeleted(false);
-        location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return Optional.of(locationRepository.save(location));
-    }
 
     @Override
     public void deleteById(Long id) {
         locationRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public Location deactivate(Long id) {
-        Location location = findLocation(id);
-        location.setDeleted(true);
-        location.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        return locationRepository.save(location);
-    }
 
     private Location findLocation(Long id) {
         return locationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Location could not be found"));

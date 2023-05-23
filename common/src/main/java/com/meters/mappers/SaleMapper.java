@@ -3,7 +3,8 @@ package com.meters.mappers;
 import com.meters.entities.Sale;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.RealEstateRepository;
-import com.meters.requests.SaleRequest;
+import com.meters.requests.create.SaleRequest;
+import com.meters.requests.update.SaleUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -25,9 +26,12 @@ public class SaleMapper {
         return sale;
     }
 
-    public Sale updateSale(SaleRequest saleRequest, Sale sale) {
+    public Sale updateSale(SaleUpdateRequest saleRequest, Sale sale) {
         if (saleRequest.getPrice() != null) {
             sale.setPrice(saleRequest.getPrice());
+        }
+        if (saleRequest.getIsDeleted() != null) {
+            sale.setDeleted(saleRequest.getIsDeleted());
         }
         setRealEstate(saleRequest, sale);
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));

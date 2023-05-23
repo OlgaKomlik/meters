@@ -22,6 +22,7 @@ import lombok.ToString;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import java.util.Set;
 @Cacheable("locations")
 @Table(name = "locations")
 public class Location {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id", nullable = false)
@@ -43,6 +45,7 @@ public class Location {
     @NotNull
     @Column(name = "country", nullable = false, length = 50)
     private String country;
+
     @Size(max = 50)
     @NotNull
     @Column(name = "city", nullable = false, length = 50)
@@ -59,10 +62,10 @@ public class Location {
     private String region;
 
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

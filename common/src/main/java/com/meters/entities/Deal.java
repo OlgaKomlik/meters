@@ -24,6 +24,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -42,6 +43,7 @@ public class Deal {
     @NotNull
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
+
     @NotNull
     @Column(name = "fee", nullable = false)
     private BigDecimal fee;
@@ -50,10 +52,10 @@ public class Deal {
     private Timestamp dealDate;
 
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

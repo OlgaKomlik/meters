@@ -1,8 +1,11 @@
 package com.meters.controller;
 
 import com.meters.entities.Deal;
-import com.meters.requests.DealRequest;
+import com.meters.exceptoins.ValidationException;
+import com.meters.requests.create.DealRequest;
+import com.meters.requests.update.DealUpdateRequest;
 import com.meters.service.DealService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,27 +25,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/rest/deals")
+@Tag(name = "DealController", description = "Deal management methods")
 @RequiredArgsConstructor
 public class DealController {
 
     private final DealService dealService;
 
-    @Value("${deal.page-capacity}")
+    @Value("${page-capacity.deal}")
     private Integer pageCapacity;
 
     @GetMapping
-    public ResponseEntity<Object> getAllDeals() {
+    public ResponseEntity<List<Deal>> getAllDeals() {
         List<Deal> deals = dealService.findAll();
         return new ResponseEntity<>(deals, HttpStatus.OK);
     }
 
 
     @GetMapping("/page/{page}")
-    public ResponseEntity<Object> getAllDealsWithPageAndSort(@PathVariable int page) {
+    public ResponseEntity<Page<Deal>> getAllDealsWithPageAndSort(@PathVariable int page) {
 
         Pageable pageable = PageRequest.of(page, pageCapacity, Sort.by("id").ascending());
 
@@ -56,37 +61,40 @@ public class DealController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Deal>> getDealById(@PathVariable Long id) {
-        return ResponseEntity.ok(dealService.findById(id));
+    public ResponseEntity<Deal> getDealById(@PathVariable Long id) {
+
+        Optional<Deal> deal = dealService.findById(id);
+        if (deal.isPresent()) {
+            return new ResponseEntity<>(deal.get(), HttpStatus.OK);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping()
-    public ResponseEntity<Optional<Deal>> createDeal(@Valid @RequestBody DealRequest dealRequest) {
-        Optional<Deal> deal = dealService.createDeal(dealRequest);
+    @PostMapping
+    public ResponseEntity<Deal> createDeal(@Valid @RequestBody DealRequest dealRequest,
+                                           BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Deal deal = dealService.createDeal(dealRequest);
         return new ResponseEntity<>(deal, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<Deal>> updateDeal(@Valid @RequestBody DealRequest dealRequest, @PathVariable("id") Long id) {
-        Optional<Deal> deal = dealService.updateDeal(id, dealRequest);
+    public ResponseEntity<Deal> updateDeal(@Valid @RequestBody DealUpdateRequest dealRequest, @PathVariable("id") Long id,
+                                           BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(errorMessage);
+        }
+
+        Deal deal = dealService.updateDeal(id, dealRequest);
         return new ResponseEntity<>(deal, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/deactivate")
-    public ResponseEntity<String> deactivateDeal(@PathVariable("id") Long id) {
-        dealService.deactivate(id);
-        return new ResponseEntity<>(id + " id is deleted", HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDeal(@PathVariable("id") Long id) {
-        dealService.deleteById(id);
-        return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<Deal>> activateDeal(@PathVariable("id") Long id) {
-        Optional<Deal> deal = dealService.activateDeal(id);
-        return new ResponseEntity<>(deal, HttpStatus.OK);
-    }
 }

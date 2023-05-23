@@ -1,7 +1,8 @@
 package com.meters.service;
 
 import com.meters.entities.Sale;
-import com.meters.requests.SaleRequest;
+import com.meters.requests.create.SaleRequest;
+import com.meters.requests.update.SaleUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,9 +11,9 @@ import java.util.Optional;
 
 public interface SaleService {
 
-    Optional<Sale> createSale(SaleRequest saleRequest);
+    Sale createSale(SaleRequest saleRequest);
 
-    Optional<Sale> updateSale(Long id, SaleRequest saleRequest);
+    Sale updateSale(Long id, SaleUpdateRequest saleRequest);
 
     List<Sale> findAll();
 
@@ -20,9 +21,5 @@ public interface SaleService {
 
     Optional<Sale> findById(Long id);
 
-    Optional<Sale> activateSale(Long id);
-
     void deleteById(Long id);
-
-    Sale deactivate(Long id);
 }

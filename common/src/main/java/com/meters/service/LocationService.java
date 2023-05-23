@@ -1,7 +1,8 @@
 package com.meters.service;
 
 import com.meters.entities.Location;
-import com.meters.requests.LocationRequest;
+import com.meters.requests.create.LocationRequest;
+import com.meters.requests.update.LocationUpdateRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,9 +12,9 @@ import java.util.Optional;
 
 public interface LocationService {
 
-    Optional<Location> createLocation(LocationRequest locationRequest);
+    Location createLocation(LocationRequest locationRequest);
 
-    Optional<Location> updateLocation(Long id, LocationRequest locationRequest);
+    Location updateLocation(Long id, LocationUpdateRequest locationRequest);
 
     @Cacheable("locations")
     List<Location> findAll();
@@ -22,9 +23,6 @@ public interface LocationService {
 
     Optional<Location> findById(Long id);
 
-    Optional<Location> activateLocation(Long id);
-
     void deleteById(Long id);
 
-    Location deactivate(Long id);
 }

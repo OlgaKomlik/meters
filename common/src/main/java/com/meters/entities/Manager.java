@@ -20,7 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -33,6 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,10 +46,9 @@ import java.util.Set;
 @Entity
 @Table(name = "managers")
 public class Manager {
+
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(generator = "managers_id_seq", strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(name = "managers_id_seq", sequenceName = "managers_id_seq", allocationSize = 1, initialValue = 51)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "manager_id", nullable = false)
     private Long id;
 
@@ -68,10 +67,10 @@ public class Manager {
     private Timestamp birthDate;
 
     @Column(nullable = false)
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
     @Column(nullable = false)
-    private Timestamp changed;
+    private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
     @NotNull
     @Column(name = "is_deleted", nullable = false)

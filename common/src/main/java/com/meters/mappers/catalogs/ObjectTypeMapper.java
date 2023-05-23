@@ -1,7 +1,7 @@
 package com.meters.mappers.catalogs;
 
 import com.meters.entities.catalogs.ObjectType;
-import com.meters.requests.catalogs.ObjectTypeRequest;
+import com.meters.requests.create.catalogs.ObjectTypeRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,8 @@ package com.meters.mappers;
 
 import com.meters.entities.AuthenticationInfo;
 import com.meters.entities.Manager;
-import com.meters.requests.ManagerRequest;
+import com.meters.requests.create.ManagerRequest;
+import com.meters.requests.update.ManagerUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class ManagerMapper {
         return manager;
     }
 
-    public Manager updateManager(ManagerRequest managerRequest, Manager manager) {
+    public Manager updateManager(ManagerUpdateRequest managerRequest, Manager manager) {
         if (managerRequest.getManagerName() != null) {
             manager.setManagerName(managerRequest.getManagerName());
         }
@@ -40,6 +41,9 @@ public class ManagerMapper {
         }
         if (managerRequest.getGender() != null) {
             manager.setGender(managerRequest.getGender());
+        }
+        if (managerRequest.getIsDeleted() != null) {
+            manager.setDeleted(managerRequest.getIsDeleted());
         }
         manager.setFullName(manager.getManagerName() + " " + manager.getSurname());
         manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
