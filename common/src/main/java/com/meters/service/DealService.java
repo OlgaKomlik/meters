@@ -1,7 +1,7 @@
 package com.meters.service;
 
-import com.meters.requests.create.DealRequest;
 import com.meters.entities.Deal;
+import com.meters.requests.create.DealRequest;
 import com.meters.requests.update.DealUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,9 @@ public interface DealService {
     Deal updateDeal(Long id, DealUpdateRequest dealRequest);
 
     List<Deal> findAll();
+
     Page<Deal> findAll(Pageable pageable);
+
     Optional<Deal> findById(Long id);
 
     void deleteById(Long id);

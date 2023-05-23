@@ -1,7 +1,7 @@
 package com.meters.mappers;
 
-import com.meters.requests.create.RoleRequest;
 import com.meters.entities.Role;
+import com.meters.requests.create.RoleRequest;
 import com.meters.requests.update.RoleUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,11 +20,11 @@ public class RoleMapper {
     }
 
     public Role updateRole(RoleUpdateRequest roleRequest, Role role) {
-        if(roleRequest.getRoleName() != null) {
+        if (roleRequest.getRoleName() != null) {
             role.setRoleName(roleRequest.getRoleName());
         }
 
-        if (roleRequest.getIsDeleted() != null){
+        if (roleRequest.getIsDeleted() != null) {
             role.setDeleted(roleRequest.getIsDeleted());
         }
         role.setChanged(Timestamp.valueOf(LocalDateTime.now()));

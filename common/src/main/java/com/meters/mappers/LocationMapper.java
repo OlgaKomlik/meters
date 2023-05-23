@@ -1,7 +1,7 @@
 package com.meters.mappers;
 
-import com.meters.requests.create.LocationRequest;
 import com.meters.entities.Location;
+import com.meters.requests.create.LocationRequest;
 import com.meters.requests.update.LocationUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,19 +20,19 @@ public class LocationMapper {
     }
 
     public Location updateLocation(LocationUpdateRequest locationRequest, Location location) {
-        if(locationRequest.getCountry() != null) {
+        if (locationRequest.getCountry() != null) {
             location.setCountry(locationRequest.getCountry());
         }
-        if(locationRequest.getCity() != null) {
+        if (locationRequest.getCity() != null) {
             location.setCity(locationRequest.getCity());
         }
-        if(locationRequest.getDistrict() != null) {
+        if (locationRequest.getDistrict() != null) {
             location.setDistrict(locationRequest.getDistrict());
         }
-        if(locationRequest.getRegion() != null) {
+        if (locationRequest.getRegion() != null) {
             location.setRegion(locationRequest.getRegion());
         }
-        if (locationRequest.getIsDeleted() != null){
+        if (locationRequest.getIsDeleted() != null) {
             location.setDeleted(locationRequest.getIsDeleted());
         }
         location.setChanged(Timestamp.valueOf(LocalDateTime.now()));

@@ -1,11 +1,10 @@
 package com.meters.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.Embeddable;
 
 @Data
 @AllArgsConstructor

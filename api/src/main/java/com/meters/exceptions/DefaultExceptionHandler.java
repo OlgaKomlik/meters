@@ -1,13 +1,13 @@
 package com.meters.exceptions;
 
-import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.exceptoins.EntityIsDeletedException;
+import com.meters.exceptoins.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 
@@ -30,7 +30,7 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(EntityIsDeletedException.class)
     public ResponseEntity<ErrorMessage> handleEntityIsDeletedException(EntityIsDeletedException ex, WebRequest request) {
 
-       ErrorMessage errorMessage = new ErrorMessage();
+        ErrorMessage errorMessage = new ErrorMessage();
 
         errorMessage.setTimestamp(LocalDateTime.now());
         errorMessage.setErrorCode(HttpStatus.METHOD_NOT_ALLOWED.value());

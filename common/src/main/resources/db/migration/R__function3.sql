@@ -8,7 +8,8 @@ begin
 select min(square)
 into itemSquare
 from real_estates
-where object_type_id = object_type and rooms = rooms_criteria;
+where object_type_id = object_type
+  and rooms = rooms_criteria;
 return itemSquare;
 end
 $$;

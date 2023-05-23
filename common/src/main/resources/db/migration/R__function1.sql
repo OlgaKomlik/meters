@@ -3,9 +3,11 @@ create function bigest_fee_of_the_month(month integer, year integer) returns big
 as
 $$
 begin
-select max(fee) from deals
+select max(fee)
+from deals
 group by manager_id
-having EXTRACT(month from deal_date) = month AND EXTRACT(year from deal_date) = year;
+having EXTRACT(month from deal_date) = month
+   AND EXTRACT(year from deal_date) = year;
 end
 $$;
 

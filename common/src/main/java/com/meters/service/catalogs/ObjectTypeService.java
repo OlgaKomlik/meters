@@ -1,7 +1,7 @@
 package com.meters.service.catalogs;
 
-import com.meters.requests.create.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
+import com.meters.requests.create.catalogs.ObjectTypeRequest;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;

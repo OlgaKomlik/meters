@@ -1,7 +1,7 @@
 package com.meters.service;
 
-import com.meters.requests.create.ManagerRequest;
 import com.meters.entities.Manager;
+import com.meters.requests.create.ManagerRequest;
 import com.meters.requests.update.ManagerUpdateRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +18,7 @@ public interface ManagerService {
     Manager updateManager(Long id, ManagerUpdateRequest managerRequest);
 
     List<Manager> findAll();
+
     Page<Manager> findAll(Pageable pageable);
 
     Optional<Manager> findById(Long id);
