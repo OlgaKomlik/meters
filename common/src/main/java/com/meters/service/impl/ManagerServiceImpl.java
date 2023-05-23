@@ -1,17 +1,15 @@
 package com.meters.service.impl;
 
-import com.meters.requests.ManagerRequest;
 import com.meters.entities.Manager;
 import com.meters.entities.Role;
-import com.meters.mappers.ManagerMapper;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
+import com.meters.mappers.ManagerMapper;
 import com.meters.repository.ManagerRepository;
 import com.meters.repository.RoleRepository;
+import com.meters.requests.ManagerRequest;
 import com.meters.service.ManagerService;
-
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,12 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 @RequiredArgsConstructor
 @Service
@@ -95,6 +91,7 @@ public class ManagerServiceImpl implements ManagerService {
         manager.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return Optional.of(managerRepository.save(manager));
     }
+
     private Manager findManager(Long id) {
         return managerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Manager could not be found"));
     }
@@ -112,7 +109,7 @@ public class ManagerServiceImpl implements ManagerService {
     public List<Manager> findBirthDayManagers(LocalDateTime localDateTime) {
         Integer day = localDateTime.getDayOfMonth();
         Integer month = localDateTime.getMonthValue();
-    return managerRepository.findBirthDayManagers(day, month);
+        return managerRepository.findBirthDayManagers(day, month);
     }
 
     @Override

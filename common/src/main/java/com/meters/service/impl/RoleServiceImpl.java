@@ -1,12 +1,12 @@
 package com.meters.service.impl;
 
-import com.meters.requests.RoleRequest;
 import com.meters.entities.Role;
-import com.meters.mappers.RoleMapper;
-import com.meters.repository.RoleRepository;
-import com.meters.service.RoleService;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
+import com.meters.mappers.RoleMapper;
+import com.meters.repository.RoleRepository;
+import com.meters.requests.RoleRequest;
+import com.meters.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,7 +55,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Optional<Role> findById(Long id) {
         Role role = findRole(id);
-        if(role.isDeleted()) {
+        if (role.isDeleted()) {
             throw new EntityIsDeletedException("Role is deleted");
         }
         return Optional.of(role);

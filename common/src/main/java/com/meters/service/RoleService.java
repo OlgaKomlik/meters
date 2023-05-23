@@ -1,7 +1,7 @@
 package com.meters.service;
 
-import com.meters.requests.RoleRequest;
 import com.meters.entities.Role;
+import com.meters.requests.RoleRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +16,14 @@ public interface RoleService {
 
     @Cacheable("roles")
     List<Role> findAll();
+
     Page<Role> findAll(Pageable pageable);
 
     Optional<Role> findById(Long id);
+
     Optional<Role> activateRole(Long id);
 
     void deleteById(Long id);
+
     Role deactivate(Long id);
 }

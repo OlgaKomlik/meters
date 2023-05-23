@@ -1,7 +1,7 @@
 package com.meters.service;
 
-import com.meters.requests.ManagerRequest;
 import com.meters.entities.Manager;
+import com.meters.requests.ManagerRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,13 +17,17 @@ public interface ManagerService {
     Optional<Manager> updateManager(Long id, ManagerRequest managerRequest);
 
     List<Manager> findAll();
+
     Page<Manager> findAll(Pageable pageable);
 
     Optional<Manager> findById(Long id);
+
     Optional<Manager> activateManager(Long id);
 
     void deleteById(Long id);
+
     Manager deactivate(Long id);
+
     Optional<Manager> setUserRole(Long managerId, String roleName);
 
     List<Manager> findBirthDayManagers(LocalDateTime localDateTime);
@@ -34,5 +38,5 @@ public interface ManagerService {
 
     Manager getBestSellerOfTheMonth(int month, int year);
 
-  /*  List<Object []> getBestSellersOfTheMonth(int month, int year);*/
+    /*  List<Object []> getBestSellersOfTheMonth(int month, int year);*/
 }

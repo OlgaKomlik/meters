@@ -1,7 +1,7 @@
 package com.meters.mappers;
 
-import com.meters.requests.PersonRequest;
 import com.meters.entities.Person;
+import com.meters.requests.PersonRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,23 +21,23 @@ public class PersonMapper {
     }
 
     public Person updatePerson(PersonRequest personRequest, Person person) {
-        if(personRequest.getPersonName() != null) {
+        if (personRequest.getPersonName() != null) {
             person.setPersonName(personRequest.getPersonName());
         }
 
-        if(personRequest.getSurname() != null) {
+        if (personRequest.getSurname() != null) {
             person.setSurname(personRequest.getSurname());
         }
 
-        if(personRequest.getBirthDate() != null) {
+        if (personRequest.getBirthDate() != null) {
             person.setBirthDate(personRequest.getBirthDate());
         }
 
-        if(personRequest.getPhoneNum() != null) {
+        if (personRequest.getPhoneNum() != null) {
             person.setPhoneNum(personRequest.getPhoneNum());
         }
 
-        if(personRequest.getPassportNum() != null) {
+        if (personRequest.getPassportNum() != null) {
             person.setPassportNum(personRequest.getPassportNum());
         }
         person.setPersonFullName(person.getPersonName() + " " + person.getSurname());

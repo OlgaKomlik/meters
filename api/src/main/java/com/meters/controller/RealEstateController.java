@@ -1,7 +1,7 @@
 package com.meters.controller;
 
-import com.meters.requests.RealEstateRequest;
 import com.meters.entities.RealEstate;
+import com.meters.requests.RealEstateRequest;
 import com.meters.service.RealEstateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.meters.mappers;
 
-import com.meters.requests.ManagerRequest;
 import com.meters.entities.AuthenticationInfo;
 import com.meters.entities.Manager;
+import com.meters.requests.ManagerRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -23,22 +23,22 @@ public class ManagerMapper {
     }
 
     public Manager updateManager(ManagerRequest managerRequest, Manager manager) {
-        if(managerRequest.getManagerName() != null) {
+        if (managerRequest.getManagerName() != null) {
             manager.setManagerName(managerRequest.getManagerName());
         }
-        if(managerRequest.getSurname() != null) {
+        if (managerRequest.getSurname() != null) {
             manager.setSurname(managerRequest.getSurname());
         }
-        if(managerRequest.getBirthDate() != null) {
+        if (managerRequest.getBirthDate() != null) {
             manager.setBirthDate(managerRequest.getBirthDate());
         }
-        if(managerRequest.getEmail() != null) {
+        if (managerRequest.getEmail() != null) {
             manager.getAuthenticationInfo().setEmail(managerRequest.getEmail());
         }
-        if(managerRequest.getPassword() != null) {
+        if (managerRequest.getPassword() != null) {
             manager.getAuthenticationInfo().setPassword(managerRequest.getPassword());
         }
-        if(managerRequest.getGender() != null) {
+        if (managerRequest.getGender() != null) {
             manager.setGender(managerRequest.getGender());
         }
         manager.setFullName(manager.getManagerName() + " " + manager.getSurname());

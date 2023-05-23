@@ -1,6 +1,5 @@
 package com.meters.mappers;
 
-import com.meters.requests.RealEstateRequest;
 import com.meters.entities.RealEstate;
 import com.meters.entities.constants.ClientType;
 import com.meters.exceptoins.EntityNotFoundException;
@@ -8,6 +7,7 @@ import com.meters.repository.CompanyRepository;
 import com.meters.repository.LocationRepository;
 import com.meters.repository.PersonRepository;
 import com.meters.repository.catalogs.ObjectTypeRepository;
+import com.meters.requests.RealEstateRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -35,45 +35,44 @@ public class RealEstateMapper {
     }
 
     public RealEstate updateRealEstate(RealEstateRequest realEstateRequest, RealEstate realEstate) {
-        if(realEstateRequest.getSquare() != null) {
+        if (realEstateRequest.getSquare() != null) {
             realEstate.setSquare(realEstateRequest.getSquare());
         }
-        if(realEstateRequest.getRooms() != null) {
+        if (realEstateRequest.getRooms() != null) {
             realEstate.setRooms(realEstateRequest.getRooms());
         }
-        if(realEstateRequest.getFloors() != null) {
+        if (realEstateRequest.getFloors() != null) {
             realEstate.setFloors(realEstateRequest.getFloors());
         }
-        if(realEstateRequest.getGardenSquare() != null) {
+        if (realEstateRequest.getGardenSquare() != null) {
             realEstate.setGardenSquare(realEstateRequest.getGardenSquare());
         }
-        if(realEstateRequest.getGarage() != null) {
+        if (realEstateRequest.getGarage() != null) {
             realEstate.setGarage(realEstateRequest.getGarage());
         }
-        if(realEstateRequest.getAddress() != null) {
+        if (realEstateRequest.getAddress() != null) {
             realEstate.setAddress(realEstateRequest.getAddress());
         }
-        if(realEstateRequest.getOwnerClientType() != null) {
+        if (realEstateRequest.getOwnerClientType() != null) {
             realEstate.setOwnerClientType(ClientType.valueOf(realEstateRequest.getOwnerClientType()));
         }
-        if(realEstateRequest.getOwner() != null) {
+        if (realEstateRequest.getOwner() != null) {
             chooseOwnerByType(realEstateRequest, realEstate);
         }
-        if(realEstateRequest.getLocation() != null) {
+        if (realEstateRequest.getLocation() != null) {
             setLocation(realEstateRequest, realEstate);
         }
-        if(realEstateRequest.getObjectType() != null) {
+        if (realEstateRequest.getObjectType() != null) {
             setObjectType(realEstateRequest, realEstate);
         }
-
 
 
         realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return realEstate;
     }
 
-    public void chooseOwnerByType (RealEstateRequest realEstateRequest, RealEstate realEstate) {
-        if(realEstateRequest.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
+    public void chooseOwnerByType(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+        if (realEstateRequest.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
             realEstate.setOwnerCompany(companyRepository.findById(realEstateRequest.getOwner())
                     .orElseThrow(() -> new EntityNotFoundException("Company not exist")));
         } else if (realEstateRequest.getOwnerClientType().equals(ClientType.PERSON.toString())) {

@@ -1,11 +1,11 @@
 package com.meters.service.catalogs.impl;
 
-import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.catalogs.ObjectTypeMapper;
 import com.meters.repository.catalogs.ObjectTypeRepository;
+import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.service.catalogs.ObjectTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
     @Override
     public Optional<ObjectType> findById(Long id) {
         ObjectType objectType = findObjectType(id);
-        if(objectType.isDeleted()) {
+        if (objectType.isDeleted()) {
             throw new EntityIsDeletedException("ObjectType is deleted");
         }
         return Optional.of(objectType);

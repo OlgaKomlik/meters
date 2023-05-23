@@ -1,7 +1,7 @@
 package com.meters.controller;
 
-import com.meters.requests.RoleRequest;
 import com.meters.entities.Role;
+import com.meters.requests.RoleRequest;
 import com.meters.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

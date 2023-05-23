@@ -1,7 +1,7 @@
 package com.meters.controller.catalogs;
 
-import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
+import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.service.catalogs.ObjectTypeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

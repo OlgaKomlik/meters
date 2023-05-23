@@ -1,7 +1,7 @@
 package com.meters.controller;
 
-import com.meters.requests.LocationRequest;
 import com.meters.entities.Location;
+import com.meters.requests.LocationRequest;
 import com.meters.service.LocationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.meters.service;
 
-import com.meters.requests.LocationRequest;
 import com.meters.entities.Location;
+import com.meters.requests.LocationRequest;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +17,14 @@ public interface LocationService {
 
     @Cacheable("locations")
     List<Location> findAll();
+
     Page<Location> findAll(Pageable pageable);
 
     Optional<Location> findById(Long id);
+
     Optional<Location> activateLocation(Long id);
 
     void deleteById(Long id);
+
     Location deactivate(Long id);
 }

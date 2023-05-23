@@ -1,7 +1,7 @@
 package com.meters.mappers.catalogs;
 
-import com.meters.requests.catalogs.DealTypeRequest;
 import com.meters.entities.catalogs.DealType;
+import com.meters.requests.catalogs.DealTypeRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class DealTypeMapper {
     }
 
     public DealType updateDealType(DealTypeRequest dealTypeRequest, DealType dealType) {
-        if(dealTypeRequest.getTypeName() != null) {
+        if (dealTypeRequest.getTypeName() != null) {
             dealType.setTypeName(dealTypeRequest.getTypeName());
         }
         dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));

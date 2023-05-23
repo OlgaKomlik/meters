@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.CompanyRequest;
 import com.meters.entities.Company;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.CompanyMapper;
 import com.meters.repository.CompanyRepository;
+import com.meters.requests.CompanyRequest;
 import com.meters.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,7 +54,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Optional<Company> findById(Long id) {
         Company company = findCompany(id);
-        if(company.isDeleted()) {
+        if (company.isDeleted()) {
             throw new EntityIsDeletedException("Company is deleted");
         }
         return Optional.of(company);

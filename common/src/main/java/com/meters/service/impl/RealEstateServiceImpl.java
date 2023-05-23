@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.RealEstateRequest;
 import com.meters.entities.RealEstate;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.RealEstateMapper;
 import com.meters.repository.RealEstateRepository;
+import com.meters.requests.RealEstateRequest;
 import com.meters.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,7 +55,7 @@ public class RealEstateServiceImpl implements RealEstateService {
     @Override
     public Optional<RealEstate> findById(Long id) {
         RealEstate realEstate = findRealEstate(id);
-        if(realEstate.isDeleted()) {
+        if (realEstate.isDeleted()) {
             throw new EntityIsDeletedException("RealEstate is deleted");
         }
         return Optional.of(realEstate);

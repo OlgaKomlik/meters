@@ -1,7 +1,7 @@
 package com.meters.controller;
 
-import com.meters.requests.PersonRequest;
 import com.meters.entities.Person;
+import com.meters.requests.PersonRequest;
 import com.meters.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

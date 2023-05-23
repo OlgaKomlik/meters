@@ -1,7 +1,7 @@
 package com.meters.controller;
 
-import com.meters.requests.SaleRequest;
 import com.meters.entities.Sale;
+import com.meters.requests.SaleRequest;
 import com.meters.service.SaleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

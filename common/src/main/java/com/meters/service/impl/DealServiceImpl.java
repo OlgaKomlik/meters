@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.DealRequest;
 import com.meters.entities.Deal;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.DealMapper;
 import com.meters.repository.DealRepository;
+import com.meters.requests.DealRequest;
 import com.meters.service.DealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,7 +55,7 @@ public class DealServiceImpl implements DealService {
     @Override
     public Optional<Deal> findById(Long id) {
         Deal deal = findDeal(id);
-        if(deal.isDeleted()) {
+        if (deal.isDeleted()) {
             throw new EntityIsDeletedException("Deal is deleted");
         }
         return Optional.of(deal);

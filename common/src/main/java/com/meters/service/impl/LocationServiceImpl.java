@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.LocationRequest;
 import com.meters.entities.Location;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.LocationMapper;
 import com.meters.repository.LocationRepository;
+import com.meters.requests.LocationRequest;
 import com.meters.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,7 +55,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Optional<Location> findById(Long id) {
         Location location = findLocation(id);
-        if(location.isDeleted()) {
+        if (location.isDeleted()) {
             throw new EntityIsDeletedException("Location is deleted");
         }
         return Optional.of(location);

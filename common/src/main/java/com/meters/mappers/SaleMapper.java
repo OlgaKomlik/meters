@@ -1,9 +1,9 @@
 package com.meters.mappers;
 
-import com.meters.requests.SaleRequest;
 import com.meters.entities.Sale;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.RealEstateRepository;
+import com.meters.requests.SaleRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,18 +21,19 @@ public class SaleMapper {
 
     public Sale toEntity(SaleRequest saleRequest) {
         Sale sale = modelMapper.map(saleRequest, Sale.class);
-        setRealEstate(saleRequest,sale);
+        setRealEstate(saleRequest, sale);
         return sale;
     }
 
     public Sale updateSale(SaleRequest saleRequest, Sale sale) {
-        if(saleRequest.getPrice() != null) {
+        if (saleRequest.getPrice() != null) {
             sale.setPrice(saleRequest.getPrice());
         }
-        setRealEstate(saleRequest,sale);
+        setRealEstate(saleRequest, sale);
         sale.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return sale;
     }
+
     public void setRealEstate(SaleRequest saleRequest, Sale sale) {
         sale.setRealEstate(realEstateRepository.findById(saleRequest.getRealEstate())
                 .orElseThrow(() -> new EntityNotFoundException("RealEstate not exist")));

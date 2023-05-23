@@ -1,9 +1,9 @@
 package com.meters.mappers;
 
-import com.meters.requests.RentRequest;
 import com.meters.entities.Rent;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.repository.RealEstateRepository;
+import com.meters.requests.RentRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,21 +21,22 @@ public class RentMapper {
 
     public Rent toEntity(RentRequest rentRequest) {
         Rent rent = modelMapper.map(rentRequest, Rent.class);
-        setRealEstate(rentRequest,rent);
+        setRealEstate(rentRequest, rent);
         return rent;
     }
 
     public Rent updateRent(RentRequest rentRequest, Rent rent) {
-        if(rentRequest.getRentPerMonth() != null) {
+        if (rentRequest.getRentPerMonth() != null) {
             rent.setRentPerMonth(rentRequest.getRentPerMonth());
         }
-        if(rentRequest.getMinPeriod() != null) {
+        if (rentRequest.getMinPeriod() != null) {
             rent.setMinPeriod(rentRequest.getMinPeriod());
         }
-        setRealEstate(rentRequest,rent);
+        setRealEstate(rentRequest, rent);
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return rent;
     }
+
     public void setRealEstate(RentRequest rentRequest, Rent rent) {
         rent.setRealEstate(realEstateRepository.findById(rentRequest.getRealEstate())
                 .orElseThrow(() -> new EntityNotFoundException("RealEstate not exist")));

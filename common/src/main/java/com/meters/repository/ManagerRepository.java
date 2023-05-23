@@ -4,10 +4,7 @@ import com.meters.entities.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-
-
 import java.util.List;
-import java.util.Map;
 
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
@@ -18,7 +15,7 @@ public interface ManagerRepository extends JpaRepository<Manager, Long> {
     List<Manager> findBirthDayManagers(Integer dayToday, Integer monthToday);
 
     @Query("select m.id, AVG(d.fee) as averageFee from Deal d  JOIN d.manager m group by m.id ORDER BY averageFee desc")
-    List<Object []> getAverageFeeOfManagers();
+    List<Object[]> getAverageFeeOfManagers();
 
     @Query("select m from Manager m where m.id = best_seller_of_the_month( :month, :year)")
     Manager getBestSellerOfTheMonth(int month, int year);

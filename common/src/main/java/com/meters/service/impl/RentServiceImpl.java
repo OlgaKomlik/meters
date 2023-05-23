@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.RentRequest;
 import com.meters.entities.Rent;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.RentMapper;
 import com.meters.repository.RentRepository;
+import com.meters.requests.RentRequest;
 import com.meters.service.RentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,7 +54,7 @@ public class RentServiceImpl implements RentService {
     @Override
     public Optional<Rent> findById(Long id) {
         Rent rent = findRent(id);
-        if(rent.isDeleted()) {
+        if (rent.isDeleted()) {
             throw new EntityIsDeletedException("Rent is deleted");
         }
         return Optional.of(rent);

@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.PersonRequest;
 import com.meters.entities.Person;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.PersonMapper;
 import com.meters.repository.PersonRepository;
+import com.meters.requests.PersonRequest;
 import com.meters.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -56,7 +56,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> findById(Long id) {
         Person person = findPerson(id);
-        if(person.isDeleted()) {
+        if (person.isDeleted()) {
             throw new EntityIsDeletedException("Person is deleted");
         }
         return Optional.of(person);

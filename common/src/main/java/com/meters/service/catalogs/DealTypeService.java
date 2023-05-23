@@ -1,7 +1,7 @@
 package com.meters.service.catalogs;
 
-import com.meters.requests.catalogs.DealTypeRequest;
 import com.meters.entities.catalogs.DealType;
+import com.meters.requests.catalogs.DealTypeRequest;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
@@ -16,8 +16,10 @@ public interface DealTypeService {
     List<DealType> findAll();
 
     Optional<DealType> findById(Long id);
+
     Optional<DealType> activateDealType(Long id);
 
     void deleteById(Long id);
+
     DealType deactivate(Long id);
 }

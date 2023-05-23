@@ -1,7 +1,7 @@
 package com.meters.mappers.catalogs;
 
-import com.meters.requests.catalogs.ObjectTypeRequest;
 import com.meters.entities.catalogs.ObjectType;
+import com.meters.requests.catalogs.ObjectTypeRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class ObjectTypeMapper {
         return modelMapper.map(objectTypeRequest, ObjectType.class);
     }
 
-       public ObjectType updateObjectType(ObjectTypeRequest objectTypeRequest, ObjectType objectType) {
-        if(objectTypeRequest.getTypeName() != null) {
+    public ObjectType updateObjectType(ObjectTypeRequest objectTypeRequest, ObjectType objectType) {
+        if (objectTypeRequest.getTypeName() != null) {
             objectType.setTypeName(objectTypeRequest.getTypeName());
         }
         objectType.setChanged(Timestamp.valueOf(LocalDateTime.now()));

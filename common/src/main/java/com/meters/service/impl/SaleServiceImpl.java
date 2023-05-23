@@ -1,11 +1,11 @@
 package com.meters.service.impl;
 
-import com.meters.requests.SaleRequest;
 import com.meters.entities.Sale;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.SaleMapper;
 import com.meters.repository.SaleRepository;
+import com.meters.requests.SaleRequest;
 import com.meters.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,10 +51,11 @@ public class SaleServiceImpl implements SaleService {
     public Page<Sale> findAll(Pageable pageable) {
         return saleRepository.findAll(pageable);
     }
+
     @Override
     public Optional<Sale> findById(Long id) {
         Sale sale = findSale(id);
-        if(sale.isDeleted()) {
+        if (sale.isDeleted()) {
             throw new EntityIsDeletedException("Sale is deleted");
         }
         return Optional.of(sale);

@@ -1,12 +1,11 @@
 package com.meters.service.catalogs.impl;
 
-import com.meters.requests.catalogs.DealTypeRequest;
-
 import com.meters.entities.catalogs.DealType;
 import com.meters.exceptoins.EntityIsDeletedException;
 import com.meters.exceptoins.EntityNotFoundException;
 import com.meters.mappers.catalogs.DealTypeMapper;
 import com.meters.repository.catalogs.DealTypeRepository;
+import com.meters.requests.catalogs.DealTypeRequest;
 import com.meters.service.catalogs.DealTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,7 +49,7 @@ public class DataTypeServiceImpl implements DealTypeService {
     @Override
     public Optional<DealType> findById(Long id) {
         DealType dealType = findDealType(id);
-        if(dealType.isDeleted()) {
+        if (dealType.isDeleted()) {
             throw new EntityIsDeletedException("DealType is deleted");
         }
         return Optional.of(dealType);

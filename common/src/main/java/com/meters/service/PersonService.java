@@ -1,7 +1,7 @@
 package com.meters.service;
 
-import com.meters.requests.PersonRequest;
 import com.meters.entities.Person;
+import com.meters.requests.PersonRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,14 +15,18 @@ public interface PersonService {
     Optional<Person> updatePerson(Long id, PersonRequest personRequest);
 
     List<Person> findAll();
+
     Page<Person> findAll(Pageable pageable);
 
     Optional<Person> findById(Long id);
+
     Optional<Person> activatePerson(Long id);
 
     void deleteById(Long id);
+
     Person deactivate(Long id);
 
     Optional<Person> findByPassportNum(String passNum);
+
     List<Person> findByPersonFullNameContainingIgnoreCase(String query);
 }

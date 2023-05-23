@@ -1,7 +1,7 @@
 package com.meters.controller;
 
-import com.meters.requests.DealRequest;
 import com.meters.entities.Deal;
+import com.meters.requests.DealRequest;
 import com.meters.service.DealService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +54,7 @@ public class DealController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Deal>> getDealById(@PathVariable Long id) {
         return ResponseEntity.ok(dealService.findById(id));
