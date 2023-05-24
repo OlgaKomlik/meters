@@ -21,8 +21,8 @@ import java.util.Optional;
 @Service
 public class PersonServiceImpl implements PersonService {
 
-
     private final PersonRepository personRepository;
+
     private final PersonMapper personMapper;
 
     @Override
@@ -63,7 +63,6 @@ public class PersonServiceImpl implements PersonService {
     public void deleteById(Long id) {
         personRepository.deleteById(id);
     }
-
 
     private Person findPerson(Long id) {
         return personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Person could not be found"));

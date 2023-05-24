@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RentService {
+
     Rent createRent(RentRequest rentRequest);
 
     Rent updateRent(Long id, RentUpdateRequest rentRequest);
@@ -21,5 +22,4 @@ public interface RentService {
     Optional<Rent> findById(Long id);
 
     void deleteById(Long id);
-
 }

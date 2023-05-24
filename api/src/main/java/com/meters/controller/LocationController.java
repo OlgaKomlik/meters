@@ -33,6 +33,7 @@ import java.util.Optional;
 @Tag(name = "LocationController", description = "Location management methods")
 @RequiredArgsConstructor
 public class LocationController {
+
     private final LocationService locationService;
 
     @Value("${page-capacity.location}")
@@ -43,7 +44,6 @@ public class LocationController {
         List<Location> locations = locationService.findAll();
         return new ResponseEntity<>(locations, HttpStatus.OK);
     }
-
 
     @GetMapping("/page/{page}")
     public ResponseEntity<Page<Location>> getAllLocationsWithPageAndSort(@PathVariable int page) {
@@ -93,5 +93,4 @@ public class LocationController {
         Location location = locationService.updateLocation(id, locationRequest);
         return new ResponseEntity<>(location, HttpStatus.OK);
     }
-
 }

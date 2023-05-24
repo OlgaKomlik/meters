@@ -53,6 +53,7 @@ import java.util.Optional;
 @Tag(name = "AdminController", description = "Admin management methods")
 @RequiredArgsConstructor
 public class AdminController {
+
     private final RoleService roleService;
 
     private final ManagerService managerService;
@@ -118,7 +119,7 @@ public class AdminController {
             }
     )
     @GetMapping("/roles/{id}")
-    public ResponseEntity<Role> getRoleById(@Parameter(description = "Role ID", example = "5", required = true) @PathVariable Long id) {
+    public ResponseEntity<Role> getRoleById(@Parameter(description = "Role ID", example = "2", required = true) @PathVariable Long id) {
         Optional<Role> role = roleService.findById(id);
         if (role.isPresent()) {
             return new ResponseEntity<>(role.get(), HttpStatus.OK);
@@ -581,5 +582,4 @@ public class AdminController {
         rentService.deleteById(id);
         return new ResponseEntity<>(id + " id is deleted forever", HttpStatus.OK);
     }
-
 }

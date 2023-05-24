@@ -22,6 +22,7 @@ import java.util.Optional;
 public class SaleServiceImpl implements SaleService {
 
     private final SaleRepository saleRepository;
+
     private final SaleMapper saleMapper;
 
     @Override
@@ -62,7 +63,6 @@ public class SaleServiceImpl implements SaleService {
     public void deleteById(Long id) {
         saleRepository.deleteById(id);
     }
-
 
     private Sale findSale(Long id) {
         return saleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Sale could not be found"));

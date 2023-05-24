@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyService {
+
     Company createCompany(CompanyRequest companyRequest);
 
     Company updateCompany(Long id, CompanyUpdateRequest companyRequest);

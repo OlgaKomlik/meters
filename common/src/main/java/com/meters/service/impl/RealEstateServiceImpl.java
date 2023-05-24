@@ -64,7 +64,6 @@ public class RealEstateServiceImpl implements RealEstateService {
         realEstateRepository.deleteById(id);
     }
 
-
     private RealEstate findRealEstate(Long id) {
         return realEstateRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("RealEstate could not be found"));
     }

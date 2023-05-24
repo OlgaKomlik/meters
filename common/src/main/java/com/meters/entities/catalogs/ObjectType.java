@@ -36,6 +36,7 @@ import java.util.Set;
 @Cacheable("c_object_type")
 @Table(name = "c_object_type")
 public class ObjectType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "object_type_id", nullable = false)

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RealEstateService {
+
     RealEstate createRealEstate(RealEstateRequest realEstateRequest);
 
     RealEstate updateRealEstate(Long id, RealEstateUpdateRequest realEstateRequest);
@@ -21,5 +22,4 @@ public interface RealEstateService {
     Optional<RealEstate> findById(Long id);
 
     void deleteById(Long id);
-
 }

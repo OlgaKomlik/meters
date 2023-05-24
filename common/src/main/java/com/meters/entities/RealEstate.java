@@ -83,7 +83,6 @@ public class RealEstate {
     @Enumerated(EnumType.STRING)
     private ClientType ownerClientType = ClientType.NOT_SELECTED;
 
-
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne
@@ -123,6 +122,4 @@ public class RealEstate {
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonBackReference
     private Set<Sale> sales = Collections.emptySet();
-
-
 }

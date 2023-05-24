@@ -21,9 +21,13 @@ import java.time.LocalDateTime;
 public class RealEstateMapper {
 
     private final ModelMapper modelMapper;
+
     private final LocationRepository locationRepository;
+
     private final ObjectTypeRepository objectTypeRepository;
+
     private final PersonRepository personRepository;
+
     private final CompanyRepository companyRepository;
 
     public RealEstate toEntity(RealEstateRequest realEstateRequest) {
@@ -32,6 +36,7 @@ public class RealEstateMapper {
         setLocation(realEstateRequest, realEstate);
         setObjectType(realEstateRequest, realEstate);
         chooseOwnerByType(realEstateRequest, realEstate);
+
         return realEstate;
     }
 
@@ -70,12 +75,12 @@ public class RealEstateMapper {
             realEstate.setDeleted(realEstateRequest.getIsDeleted());
         }
 
-
         realEstate.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return realEstate;
     }
 
     public void chooseOwnerByType(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+
         if (realEstateRequest.getOwnerClientType().equals(ClientType.COMPANY.toString())) {
             realEstate.setOwnerCompany(companyRepository.findById(realEstateRequest.getOwner())
                     .orElseThrow(() -> new EntityNotFoundException("Company not exist")));
@@ -86,11 +91,13 @@ public class RealEstateMapper {
     }
 
     public void setLocation(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+
         realEstate.setLocation(locationRepository.findById(realEstateRequest.getLocation())
                 .orElseThrow(() -> new EntityNotFoundException("Location not exist")));
     }
 
     public void setObjectType(RealEstateRequest realEstateRequest, RealEstate realEstate) {
+
         realEstate.setObjectType(objectTypeRepository.findById(realEstateRequest.getObjectType())
                 .orElseThrow(() -> new EntityNotFoundException("ObjectType not exist")));
     }

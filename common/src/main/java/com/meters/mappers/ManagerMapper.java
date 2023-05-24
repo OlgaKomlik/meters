@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class ManagerMapper {
+
     private final ModelMapper modelMapper;
 
     public Manager toEntity(ManagerRequest managerRequest) {

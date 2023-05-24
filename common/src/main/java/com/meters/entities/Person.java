@@ -33,6 +33,7 @@ import java.util.Set;
 @Entity
 @Table(name = "persons")
 public class Person {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id", nullable = false)
@@ -94,5 +95,4 @@ public class Person {
     @OneToMany(mappedBy = "buyerPerson", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonBackReference
     private Set<Deal> dealsBuyer = Collections.emptySet();
-
 }

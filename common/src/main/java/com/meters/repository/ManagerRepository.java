@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
-
     List<Manager> findByFullNameContainingIgnoreCase(String query);
 
     @Query("select m from Manager m where EXTRACT(day from m.birthDate) = :dayToday AND EXTRACT(month from m.birthDate) = :monthToday")
@@ -19,5 +18,4 @@ public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
     @Query("select m from Manager m JOIN m.deals d where EXTRACT(month from d.dealDate) = :month AND EXTRACT(year from d.dealDate) = :year order by d.fee desc")
     List<Manager> getBestSellersOfTheMonth(int month, int year);
-
 }

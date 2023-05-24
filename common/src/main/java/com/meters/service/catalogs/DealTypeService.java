@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DealTypeService {
+
     DealType createDealType(DealTypeRequest dealTypeRequest);
 
     DealType updateDealType(Long id, DealTypeRequest dealTypeRequest);

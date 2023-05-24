@@ -77,12 +77,10 @@ public class DealServiceImpl implements DealService {
         return Optional.of(deal);
     }
 
-
     @Override
     public void deleteById(Long id) {
         dealRepository.deleteById(id);
     }
-
 
     private Deal findDeal(Long id) {
         return dealRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Deal could not be found"));

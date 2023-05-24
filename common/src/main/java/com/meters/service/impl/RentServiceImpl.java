@@ -20,7 +20,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class RentServiceImpl implements RentService {
+
     private final RentRepository rentRepository;
+
     private final RentMapper rentMapper;
 
     @Override
@@ -57,12 +59,10 @@ public class RentServiceImpl implements RentService {
         return Optional.of(rent);
     }
 
-
     @Override
     public void deleteById(Long id) {
         rentRepository.deleteById(id);
     }
-
 
     private Rent findRent(Long id) {
         return rentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rent could not be found"));

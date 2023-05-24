@@ -20,11 +20,12 @@ public class DealTypeMapper {
     }
 
     public DealType updateDealType(DealTypeRequest dealTypeRequest, DealType dealType) {
+
         if (dealTypeRequest.getTypeName() != null) {
             dealType.setTypeName(dealTypeRequest.getTypeName());
         }
-        dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 
+        dealType.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return dealType;
     }
 }

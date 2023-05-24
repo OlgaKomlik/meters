@@ -19,14 +19,16 @@ import java.util.concurrent.TimeUnit;
 @PropertySource(value = "classpath:application.yml")
 public class CacheConfiguration {
 
-
     private Integer initialCapacity;
+
     private Integer maximumSize;
+
     private Integer expireAfterAccessHours;
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager("locations", "roles", "c_deal_type", "c_object_type");
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager("locations", "roles", "c_deal_type",
+                "c_object_type");
         cacheManager.setCaffeine(cacheProperties());
         return cacheManager;
     }

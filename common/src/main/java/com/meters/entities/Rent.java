@@ -72,6 +72,4 @@ public class Rent {
     @OneToMany(mappedBy = "rent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonBackReference
     private Set<Deal> deals = Collections.emptySet();
-
-
 }

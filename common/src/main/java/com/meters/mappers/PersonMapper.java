@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class PersonMapper {
+
     private final ModelMapper modelMapper;
 
     public Person toEntity(PersonRequest personRequest) {
@@ -22,29 +23,26 @@ public class PersonMapper {
     }
 
     public Person updatePerson(PersonUpdateRequest personRequest, Person person) {
+
         if (personRequest.getPersonName() != null) {
             person.setPersonName(personRequest.getPersonName());
         }
-
         if (personRequest.getSurname() != null) {
             person.setSurname(personRequest.getSurname());
         }
-
         if (personRequest.getBirthDate() != null) {
             person.setBirthDate(personRequest.getBirthDate());
         }
-
         if (personRequest.getPhoneNum() != null) {
             person.setPhoneNum(personRequest.getPhoneNum());
         }
-
         if (personRequest.getPassportNum() != null) {
             person.setPassportNum(personRequest.getPassportNum());
         }
-
         if (personRequest.getIsDeleted() != null) {
             person.setDeleted(personRequest.getIsDeleted());
         }
+
         person.setPersonFullName(person.getPersonName() + " " + person.getSurname());
         person.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

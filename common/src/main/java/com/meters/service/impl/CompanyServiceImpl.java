@@ -20,7 +20,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CompanyServiceImpl implements CompanyService {
+
     private final CompanyRepository companyRepository;
+
     private final CompanyMapper companyMapper;
 
     @Override
@@ -57,12 +59,10 @@ public class CompanyServiceImpl implements CompanyService {
         return Optional.of(company);
     }
 
-
     @Override
     public void deleteById(Long id) {
         companyRepository.deleteById(id);
     }
-
 
     private Company findCompany(Long id) {
         return companyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Company could not be found"));

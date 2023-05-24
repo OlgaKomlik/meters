@@ -115,7 +115,7 @@ public class ManagerServiceImpl implements ManagerService {
         return managersFee;
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 25 14 * * *")
     @Transactional
     public void sendEmailToBirthDayManagers() {
         List<Manager> managers = findBirthDayManagers(LocalDateTime.now());

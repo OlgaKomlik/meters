@@ -21,18 +21,24 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class DealMapper {
+
     private static final Long DEAL_TYPE_RENT_ID = 2L;
+
     private static final Long DEAL_TYPE_SALE_ID = 1L;
 
-
     private final ModelMapper modelMapper;
-    private final PersonRepository personRepository;
-    private final CompanyRepository companyRepository;
-    private final ManagerRepository managerRepository;
-    private final DealTypeRepository dealTypeRepository;
-    private final RentRepository rentRepository;
-    private final SaleRepository saleRepository;
 
+    private final PersonRepository personRepository;
+
+    private final CompanyRepository companyRepository;
+
+    private final ManagerRepository managerRepository;
+
+    private final DealTypeRepository dealTypeRepository;
+
+    private final RentRepository rentRepository;
+
+    private final SaleRepository saleRepository;
 
     public Deal toEntity(DealRequest dealRequest) {
         Deal deal = modelMapper.map(dealRequest, Deal.class);
@@ -44,7 +50,6 @@ public class DealMapper {
 
         return deal;
     }
-
 
     public Deal updateDeal(DealUpdateRequest dealRequest, Deal deal) {
         if (dealRequest.getAmount() != null) {
@@ -77,7 +82,6 @@ public class DealMapper {
         if (dealRequest.getBuyer() != null) {
             chooseBuyer(dealRequest, deal);
         }
-
         if (dealRequest.getIsDeleted() != null) {
             deal.setDeleted(dealRequest.getIsDeleted());
         }

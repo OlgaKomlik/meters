@@ -22,6 +22,7 @@ import java.util.Optional;
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
+
     private final RoleMapper roleMapper;
 
     @Override
@@ -62,7 +63,6 @@ public class RoleServiceImpl implements RoleService {
     public void deleteById(Long id) {
         roleRepository.deleteById(id);
     }
-
 
     private Role findRole(Long id) {
         return roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role could not be found"));

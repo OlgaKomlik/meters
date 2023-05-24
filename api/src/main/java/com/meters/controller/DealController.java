@@ -45,7 +45,6 @@ public class DealController {
         return new ResponseEntity<>(deals, HttpStatus.OK);
     }
 
-
     @GetMapping("/page/{page}")
     public ResponseEntity<Page<Deal>> getAllDealsWithPageAndSort(@PathVariable int page) {
 
@@ -96,5 +95,4 @@ public class DealController {
         Deal deal = dealService.updateDeal(id, dealRequest);
         return new ResponseEntity<>(deal, HttpStatus.OK);
     }
-
 }

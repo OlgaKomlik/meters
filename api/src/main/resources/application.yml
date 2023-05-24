@@ -1,6 +1,4 @@
 spring:
-  jpa:
-    show-sql: true
   datasource:
     hikari:
       jdbc-url: jdbc:postgresql://localhost:5432/agency
@@ -20,6 +18,10 @@ spring:
     url: ${spring.datasource.url}
     default-schema: public
     validate-on-migrate: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
   mail:
     host: smtp.gmail.com
     port: 587

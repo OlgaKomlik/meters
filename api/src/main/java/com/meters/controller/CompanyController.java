@@ -34,6 +34,7 @@ import java.util.Optional;
 @Tag(name = "CompanyController", description = "Company management methods")
 @RequiredArgsConstructor
 public class CompanyController {
+
     private final CompanyService companyService;
 
     @Value("${page-capacity.company}")
@@ -96,7 +97,6 @@ public class CompanyController {
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
-
     @GetMapping("/search/unp")
     public ResponseEntity<Company> getCompanyByUnp(@RequestParam String unp) {
 
@@ -114,6 +114,4 @@ public class CompanyController {
         List<Company> companies = companyService.findCompaniesByCompanyNameIsContainingIgnoreCase(query);
         return ResponseEntity.ok(companies);
     }
-
-
 }

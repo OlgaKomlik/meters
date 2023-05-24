@@ -33,6 +33,7 @@ import java.util.Optional;
 @Tag(name = "SaleController", description = "Sale management methods")
 @RequiredArgsConstructor
 public class SaleController {
+
     private final SaleService saleService;
 
     @Value("${page-capacity.sale}")

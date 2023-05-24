@@ -56,7 +56,6 @@ public class DataTypeServiceImpl implements DealTypeService {
         dealTypeRepository.deleteById(id);
     }
 
-
     private DealType findDealType(Long id) {
         return dealTypeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("DealType could not be found"));
     }

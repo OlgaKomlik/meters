@@ -94,6 +94,4 @@ public class RealEstateController {
         RealEstate realEstate = realEstateService.updateRealEstate(id, realEstateRequest);
         return new ResponseEntity<>(realEstate, HttpStatus.OK);
     }
-
-
 }

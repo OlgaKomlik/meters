@@ -8,8 +8,7 @@ import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-    public Optional<Company> findCompanyByUnpNum(String unpNum);
+    Optional<Company> findCompanyByUnpNum(String unpNum);
 
-    public List<Company> findCompaniesByCompanyNameIsContainingIgnoreCase(String query);
-
+    List<Company> findCompaniesByCompanyNameIsContainingIgnoreCase(String query);
 }

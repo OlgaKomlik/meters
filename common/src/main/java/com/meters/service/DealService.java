@@ -22,5 +22,4 @@ public interface DealService {
     Optional<Deal> findById(Long id);
 
     void deleteById(Long id);
-
 }

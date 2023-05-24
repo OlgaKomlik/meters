@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoleService {
+
     Role createRole(RoleRequest roleRequest);
 
     Role updateRole(Long id, RoleUpdateRequest roleRequest);
@@ -22,7 +23,5 @@ public interface RoleService {
 
     Optional<Role> findById(Long id);
 
-
     void deleteById(Long id);
-
 }

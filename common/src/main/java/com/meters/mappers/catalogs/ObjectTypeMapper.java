@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class ObjectTypeMapper {
+
     private final ModelMapper modelMapper;
 
     public ObjectType toEntity(ObjectTypeRequest objectTypeRequest) {

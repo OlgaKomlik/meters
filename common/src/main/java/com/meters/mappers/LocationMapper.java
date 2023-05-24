@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class LocationMapper {
+
     private final ModelMapper modelMapper;
 
     public Location toEntity(LocationRequest locationRequest) {

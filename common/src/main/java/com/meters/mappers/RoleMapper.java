@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class RoleMapper {
+
     private final ModelMapper modelMapper;
 
     public Role toEntity(RoleRequest roleRequest) {
@@ -20,6 +21,7 @@ public class RoleMapper {
     }
 
     public Role updateRole(RoleUpdateRequest roleRequest, Role role) {
+
         if (roleRequest.getRoleName() != null) {
             role.setRoleName(roleRequest.getRoleName());
         }
@@ -28,7 +30,6 @@ public class RoleMapper {
             role.setDeleted(roleRequest.getIsDeleted());
         }
         role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-
         return role;
     }
 }

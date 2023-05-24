@@ -56,7 +56,6 @@ public class ObjectTypeServiceImpl implements ObjectTypeService {
         objectTypeRepository.deleteById(id);
     }
 
-
     private ObjectType findObjectType(Long id) {
         return objectTypeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ObjectType could not be found"));
     }

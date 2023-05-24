@@ -68,6 +68,4 @@ public class Sale {
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonBackReference
     private Set<Deal> deals = Collections.emptySet();
-
-
 }

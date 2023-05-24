@@ -22,6 +22,7 @@ import java.util.Optional;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
+
     private final LocationMapper locationMapper;
 
     @Override
@@ -58,12 +59,10 @@ public class LocationServiceImpl implements LocationService {
         return Optional.of(location);
     }
 
-
     @Override
     public void deleteById(Long id) {
         locationRepository.deleteById(id);
     }
-
 
     private Location findLocation(Long id) {
         return locationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Location could not be found"));

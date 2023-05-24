@@ -36,7 +36,9 @@ public class RentMapper {
         if (rentRequest.getIsDeleted() != null) {
             rent.setDeleted(rentRequest.getIsDeleted());
         }
-        setRealEstate(rentRequest, rent);
+        if (rentRequest.getRealEstate() != null) {
+            setRealEstate(rentRequest, rent);
+        }
         rent.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return rent;
     }

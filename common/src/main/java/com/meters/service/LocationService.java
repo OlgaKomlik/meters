@@ -24,5 +24,4 @@ public interface LocationService {
     Optional<Location> findById(Long id);
 
     void deleteById(Long id);
-
 }

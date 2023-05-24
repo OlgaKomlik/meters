@@ -33,6 +33,7 @@ import java.util.Set;
 @Entity
 @Table(name = "companies")
 public class Company {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_id", nullable = false)
@@ -47,6 +48,7 @@ public class Company {
     @NotNull
     @Column(name = "unp_num", nullable = false, length = 9)
     private String unpNum;
+
     @Size(max = 100)
     @NotNull
     @Column(name = "director_full_name", nullable = false, length = 100)

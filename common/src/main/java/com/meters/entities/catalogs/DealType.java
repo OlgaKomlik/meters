@@ -46,6 +46,7 @@ public class DealType {
     @NotNull
     @Column(name = "type_name", nullable = false, length = 30)
     private String typeName;
+
     @Column(nullable = false)
     private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
@@ -61,5 +62,4 @@ public class DealType {
     @OneToMany(mappedBy = "dealType", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonBackReference
     private Set<Deal> deals = Collections.emptySet();
-
 }

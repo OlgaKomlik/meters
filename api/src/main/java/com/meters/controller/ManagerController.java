@@ -261,7 +261,7 @@ public class ManagerController {
             }
     )
     @GetMapping("/search/fullname")
-    public ResponseEntity<List<Manager>> findByFullName(@Parameter(description = "Query to search") @RequestParam String query) {
+    public ResponseEntity<List<Manager>> findByFullName(@Parameter(description = "Query to search", example = "Olga K") @RequestParam String query) {
         List<Manager> managers = managerService.findByFullNameContainingIgnoreCase(query);
         return ResponseEntity.ok(managers);
     }
@@ -284,8 +284,8 @@ public class ManagerController {
             }
     )
     @GetMapping("/stat/sellers")
-    public ResponseEntity<List<Manager>> findBestSellers(@Parameter(description = "month value") @RequestParam int month,
-                                                         @Parameter(description = "year value") @RequestParam int year) {
+    public ResponseEntity<List<Manager>> findBestSellers(@Parameter(description = "month value", example = "5", required = true) @RequestParam int month,
+                                                         @Parameter(description = "year value", example = "2023", required = true) @RequestParam int year) {
         return ResponseEntity.ok(managerService.getBestSellersOfTheMonth(month, year));
     }
 }

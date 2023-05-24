@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 @Configuration
 public class ApplicationConfig {
+
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
